@@ -89,6 +89,7 @@ INSERT INTO scores VALUES ('Alice', 95), ('Bob', 87);
 
 ```` markdown
 ```{duckdb}
+#| ansi: html
 .tables
 ```
 ````
@@ -103,7 +104,7 @@ INSERT INTO scores VALUES ('Alice', 95), ('Bob', 87);
     #> [00m[90m│               │[00m[90m
     #> [00m[90m│    [00m[90m2 rows[00m[90m     │[00m[90m
     #> [00m[90m└───────────────┘[00m[90m
-    #> [00m___DUCKKNIT_43744f3a___
+    #> [00m___DUCKKNIT_4f05d176___
 
 ```` markdown
 ```{duckdb}

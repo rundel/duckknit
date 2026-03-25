@@ -154,6 +154,34 @@ test_that("engine does not echo mode command in displayed code", {
   expect_false(grepl("\\.mode csv", result))
 })
 
+test_that("ansi=FALSE strips ANSI codes from .tables output", {
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  eng_duckdb(make_options("CREATE TABLE ansi_t (id INT, name TEXT);"))
+  result = eng_duckdb(make_options(".tables", ansi = FALSE))
+
+  expect_snapshot(cat(result))
+})
+
+test_that("ansi=TRUE preserves ANSI codes in .tables output", {
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  eng_duckdb(make_options("CREATE TABLE ansi_t (id INT, name TEXT);"))
+  result = eng_duckdb(make_options(".tables", ansi = TRUE))
+
+  expect_snapshot(cat(result))
+})
+
+test_that("ansi='html' converts ANSI to HTML in .tables output", {
+  skip_if_not_installed("cli")
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  eng_duckdb(make_options("CREATE TABLE ansi_t (id INT, name TEXT);"))
+  result = eng_duckdb(make_options(".tables", ansi = "html"))
+
+  expect_snapshot(cat(result))
+})
+
 test_that("counter resets after kill_all", {
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 

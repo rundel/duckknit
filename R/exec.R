@@ -41,9 +41,9 @@ duckknit_exec = function(session, code, timeout = 30000L) {
   stderr_buf = session$read_error()
 
   stdout_lines = strsplit(stdout_buf, "\n", fixed = TRUE)[[1]]
-  sentinel_idx = match(sentinel, stdout_lines)
-  if (!is.na(sentinel_idx)) {
-    stdout_lines = stdout_lines[seq_len(sentinel_idx - 1L)]
+  sentinel_idx = grep(sentinel, stdout_lines, fixed = TRUE)
+  if (length(sentinel_idx) > 0) {
+    stdout_lines = stdout_lines[seq_len(sentinel_idx[1] - 1L)]
   }
 
   # Drop trailing empty line if present

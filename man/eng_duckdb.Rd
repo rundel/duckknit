@@ -26,5 +26,8 @@ is reused (or a new one is created automatically).}
 Sends \verb{.mode <value>} before executing the chunk's SQL.}
 \item{\code{timeout}}{Maximum milliseconds to wait for output. Defaults to
 \code{30000}.}
+\item{\code{ansi}}{Controls handling of ANSI escape codes in output.
+\code{TRUE} preserves them, \code{FALSE} (default) strips them, and \code{"html"}
+converts them to HTML markup via \code{\link[cli:ansi_html]{cli::ansi_html()}}.}
 }
 }

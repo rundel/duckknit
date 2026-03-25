@@ -13,6 +13,9 @@
 #'     Sends `.mode <value>` before executing the chunk's SQL.}
 #'   \item{`timeout`}{Maximum milliseconds to wait for output. Defaults to
 #'     `30000`.}
+#'   \item{`ansi`}{Controls handling of ANSI escape codes in output.
+#'     `TRUE` preserves them, `FALSE` (default) strips them, and `"html"`
+#'     converts them to HTML markup via [cli::ansi_html()].}
 #' }
 #'
 #' @return A character string of formatted output for knitr.
@@ -36,6 +39,10 @@ eng_duckdb = function(options) {
   }
 
   result = duckknit_exec(session, exec_code, timeout = timeout)
+
+  ansi = options$ansi %||% FALSE
+  result$stdout = process_ansi(result$stdout, ansi)
+  result$stderr = process_ansi(result$stderr, ansi)
 
   if (nzchar(result$stderr)) {
     if (isTRUE(options$error)) {
@@ -69,6 +76,20 @@ resolve_session = function(session, db) {
   }
 
   next_session_name()
+}
+
+strip_ansi = function(x) {
+  gsub("\033\\[[0-9;]*m", "", x)
+}
+
+process_ansi = function(x, ansi) {
+  if (identical(ansi, "html")) {
+    return(cli::ansi_html(x))
+  }
+  if (isTRUE(ansi)) {
+    return(x)
+  }
+  strip_ansi(x)
 }
 
 `%||%` = function(x, y) {
