@@ -4,8 +4,8 @@
       cat(result)
     Output
       .tables
-       ─── memory ───
-       ──── main ────
+       ─── memory ─── 
+       ──── main ──── 
       ┌──────────────┐
       │    ansi_t    │
       │              │
@@ -21,8 +21,8 @@
       cat(result)
     Output
       .tables
-       ─── memory ───
-       ──── main ────
+       ─── memory ─── 
+       ──── main ──── 
       ┌──────────────┐
       │    ansi_t    │
       │              │
@@ -38,8 +38,8 @@
       cat(result)
     Output
       .tables
-       ─── memory ───
-       ──── main ────
+       ─── memory ─── 
+       ──── main ──── 
       ┌──────────────┐
       │    ansi_t    │
       │              │
