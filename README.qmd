@@ -25,6 +25,7 @@ library(duckknit)
 # duckknit <img src="man/figures/duckknit_hex.png" align="right" style="height:140px;max-width:200px;" alt="duckknit website" />
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/rundel/duckknit/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rundel/duckknit/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 duckknit provides a [knitr](https://yihui.org/knitr/) chunk engine that interfaces with the [DuckDB](https://duckdb.org/) command-line interface. It allows you to write `{duckdb}` code chunks in R Markdown and Quarto documents that execute SQL against DuckDB databases, with persistent sessions that carry state across chunks.

@@ -6,6 +6,7 @@
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/rundel/duckknit/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rundel/duckknit/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 duckknit provides a [knitr](https://yihui.org/knitr/) chunk engine that
