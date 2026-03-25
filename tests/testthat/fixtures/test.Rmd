@@ -1,0 +1,54 @@
+---
+title: "duckknit Rmd test"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+library(duckknit)
+```
+
+## Basic query
+
+```{duckdb}
+SELECT 1 as val;
+```
+
+## Create and query
+
+```{duckdb, session="persist"}
+CREATE TABLE students (id INT, name TEXT, grade DOUBLE);
+INSERT INTO students VALUES (1, 'Alice', 95.5), (2, 'Bob', 87.3), (3, 'Carol', 92.1);
+```
+
+```{duckdb}
+SELECT * FROM students ORDER BY grade DESC;
+```
+
+## Mode chunk option
+
+```{duckdb, mode="csv"}
+SELECT * FROM students ORDER BY id;
+```
+
+## Inline mode change persists
+
+```{duckdb}
+.mode markdown
+SELECT name, grade FROM students WHERE grade > 90;
+```
+
+```{duckdb}
+SELECT name FROM students WHERE grade < 90;
+```
+
+## Eval false
+
+```{duckdb, eval=FALSE}
+SELECT 'not evaluated';
+```
+
+## Error display
+
+```{duckdb, error=TRUE}
+SELCT bad syntax;
+```

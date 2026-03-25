@@ -1,0 +1,27 @@
+url: ~
+template:
+  bootstrap: 5
+
+reference:
+  - title: Knitr Engine
+    desc: The chunk engine for R Markdown and Quarto documents.
+    contents:
+      - eng_duckdb
+
+  - title: Session Management
+    desc: Create, retrieve, and clean up persistent DuckDB CLI sessions.
+    contents:
+      - duckknit_start_session
+      - duckknit_get_session
+      - duckknit_kill_session
+      - duckknit_kill_all_sessions
+
+  - title: Execution
+    desc: Send SQL to a DuckDB CLI session and capture output.
+    contents:
+      - duckknit_exec
+
+  - title: Diagnostics
+    desc: Inspect the current state of the DuckDB CLI and active sessions.
+    contents:
+      - duckdb_sitrep

@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:yihui.org)",
+      "Bash(duckdb:*)",
+      "WebFetch(domain:processx.r-lib.org)",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "Bash(/opt/homebrew/bin/duckdb)",
+      "Bash(Rscript -e 'cat\\(capture.output\\(args\\(knitr::engine_output\\)\\), sep=\"\\\\n\"\\)')",
+      "Bash(Rscript -e 'cat\\(deparse\\(body\\(knitr::engine_output\\)\\), sep=\"\"\"\"\\\\n\"\"\"\"\\)')",
+      "Bash(Rscript -e 'cat\\(deparse\\(knitr::knit_hooks$get\\(\"document\"\\)\\), sep=\"\\\\n\"\\)')",
+      "Bash(printf 'SELECT 1 as val;\\\\n.print ___SENTINEL___\\\\n')",
+      "Bash(Rscript -e \"devtools::document\\(\\)\")",
+      "Bash(Rscript -e 'devtools::load_all\\(\\); rmarkdown::render\\(\"test.Rmd\", quiet = TRUE\\)')",
+      "Bash(NOT_CRAN=true Rscript -e \"devtools::test\\(\\)\" 2>&1)",
+      "Bash(Rscript -e 'devtools::document\\(\\)' 2>&1)"
+    ]
+  }
+}

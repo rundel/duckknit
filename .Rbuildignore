@@ -1,0 +1,6 @@
+^README\.qmd$
+^README\.md$
+^\.Rbuildignore$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
