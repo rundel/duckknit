@@ -22,9 +22,16 @@ instructions.
 
 You can verify your installation with:
 
-``` bash
-duckdb --version
-#> v1.5.1 (Variegata) 7dbb2e646f
+``` r
+duckdb_sitrep()
+#> duckknit situation report
+#> ========================
+#> 
+#> DuckDB CLI
+#>   Path:    /opt/homebrew/bin/duckdb 
+#>   Version: v1.5.1 (Variegata) 7dbb2e646f 
+#> 
+#> Sessions: 0 active
 ```
 
 ## Installation
@@ -180,6 +187,51 @@ SELECT 'still here' as status;
     #> ├────────────┤
     #> │ still here │
     #> └────────────┘
+
+### Managing sessions
+
+Use `duckdb_sitrep()` to see active sessions. The `*` marks the last
+used session:
+
+```` markdown
+```{r}
+duckdb_sitrep()
+```
+````
+
+    #> duckknit situation report
+    #> ========================
+    #> 
+    #> DuckDB CLI
+    #>   Path:    /opt/homebrew/bin/duckdb 
+    #>   Version: v1.5.1 (Variegata) 7dbb2e646f 
+    #> 
+    #> Sessions: 3 active
+    #>   - analysis (running) -> :memory:  * 
+    #>   - session-1 (running) -> :memory:  
+    #>   - session-2 (running) -> /Users/rundel/Desktop/Projects/duckknit/my.duckdb
+
+Use `duckknit_list_sessions()` to get a tibble of sessions:
+
+```` markdown
+```{r}
+duckknit_list_sessions()
+```
+````
+
+    #> # A tibble: 3 × 4
+    #>   session   status  db                                                active
+    #>   <chr>     <chr>   <chr>                                             <lgl> 
+    #> 1 analysis  running :memory:                                          TRUE  
+    #> 2 session-1 running :memory:                                          FALSE 
+    #> 3 session-2 running /Users/rundel/Desktop/Projects/duckknit/my.duckdb FALSE
+
+You can also kill individual sessions or all sessions at once:
+
+``` r
+duckknit_kill_session("analysis")
+duckknit_kill_all_sessions()
+```
 
 ## Chunk options
 

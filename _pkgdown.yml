@@ -1,4 +1,4 @@
-url: ~
+url: https://rundel.github.io/duckknit/
 template:
   bootstrap: 5
   bslib:
@@ -12,6 +12,7 @@ navbar:
 home:
   sidebar:
     structure: [links, license, community, citation, authors, dev, toc]
+  strip_header: true
 
 reference:
   - title: Knitr Engine
@@ -25,6 +26,7 @@ reference:
       - duckknit_start_session
       - duckknit_get_session
       - duckknit_kill_session
+      - duckknit_list_sessions
       - duckknit_kill_all_sessions
 
   - title: Execution

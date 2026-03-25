@@ -16,21 +16,9 @@ duckdb_sitrep = function() {
   cat("========================\n\n")
 
   if (!cli_found) {
-    source = if (!is.null(getOption("duckknit.duckdb"))) {
-      paste0("option duckknit.duckdb = \"", getOption("duckknit.duckdb"), "\"")
-    } else {
-      "PATH"
-    }
     cat("DuckDB CLI: NOT FOUND\n")
-    cat("  Source:", source, "\n")
     cat("\n  Install DuckDB or set options(duckknit.duckdb = '/path/to/duckdb')\n")
     return(invisible(list(path = NA, version = NA, sessions = list())))
-  }
-
-  source = if (!is.null(getOption("duckknit.duckdb"))) {
-    "option (duckknit.duckdb)"
-  } else {
-    "PATH"
   }
 
   version = tryCatch(
@@ -41,7 +29,6 @@ duckdb_sitrep = function() {
 
   cat("DuckDB CLI\n")
   cat("  Path:   ", path, "\n")
-  cat("  Source:  ", source, "\n")
   cat("  Version:", version, "\n")
 
   session_names = ls(.sessions)
@@ -64,4 +51,35 @@ duckdb_sitrep = function() {
     path = path, version = version,
     sessions = session_names, last_session = .state$last_session
   ))
+}
+
+#' List active DuckDB CLI sessions
+#'
+#' Returns a tibble summarising all registered sessions.
+#'
+#' @return A [tibble::tibble] with columns `session`, `status`, `db`, and
+#'   `active` (logical, `TRUE` for the last used session).
+#' @export
+duckknit_list_sessions = function() {
+  session_names = ls(.sessions)
+
+  if (length(session_names) == 0) {
+    return(tibble::tibble(
+      session = character(),
+      status = character(),
+      db = character(),
+      active = logical()
+    ))
+  }
+
+  tibble::tibble(
+    session = session_names,
+    status = vapply(session_names, function(nm) {
+      if (.sessions[[nm]]$is_alive()) "running" else "dead"
+    }, character(1)),
+    db = vapply(session_names, function(nm) {
+      if (nm %in% ls(.session_dbs)) .session_dbs[[nm]] else ":memory:"
+    }, character(1)),
+    active = session_names == .state$last_session
+  )
 }

@@ -6,10 +6,14 @@ Authors@R:
 Description: Provides a knitr chunk engine that interfaces with the DuckDB
     command-line interface. Chunks can target specific database files and
     maintain persistent sessions across chunks within a document.
+URL: https://rundel.github.io/duckknit/,
+    https://github.com/rundel/duckknit
+BugReports: https://github.com/rundel/duckknit/issues
 License: MIT + file LICENSE
 Imports:
     knitr,
-    processx
+    processx,
+    tibble
 Suggests:
     cli,
     quarto,

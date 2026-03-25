@@ -35,9 +35,9 @@ The DuckDB CLI must be installed and available on your `PATH`. See the [DuckDB i
 
 You can verify your installation with:
 
-```{bash}
+```{r}
 #| echo: true
-duckdb --version
+duckdb_sitrep()
 ```
 
 ## Installation
@@ -117,6 +117,27 @@ SELECT 42 as answer;
 ```{duckdb}
 #| session: analysis
 SELECT 'still here' as status;
+```
+
+### Managing sessions
+
+Use `duckdb_sitrep()` to see active sessions. The `*` marks the last used session:
+
+```{r}
+duckdb_sitrep()
+```
+
+Use `duckknit_list_sessions()` to get a tibble of sessions:
+
+```{r}
+duckknit_list_sessions()
+```
+
+You can also kill individual sessions or all sessions at once:
+
+```r
+duckknit_kill_session("analysis")
+duckknit_kill_all_sessions()
 ```
 
 ## Chunk options
