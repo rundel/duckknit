@@ -1,7 +1,9 @@
 duckdb_variant = function() {
   ver = processx::run(duckknit:::find_duckdb(), "--version")$stdout
   minor = as.integer(sub("^v\\d+\\.(\\d+)\\..*", "\\1", trimws(ver)))
-  if (minor <= 4) "v1.4" else "v1.5"
+  version = if (minor <= 4) "v1.4" else "v1.5"
+  os = if (.Platform$OS.type == "windows") "windows" else "unix"
+  paste(version, os, sep = "-")
 }
 
 make_options = function(code, ...) {
