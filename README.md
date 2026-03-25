@@ -24,9 +24,8 @@ You can verify your installation with:
 
 ``` bash
 duckdb --version
+#> v1.5.1 (Variegata) 7dbb2e646f
 ```
-
-    v1.5.1 (Variegata) 7dbb2e646f
 
 ## Installation
 
@@ -59,16 +58,15 @@ INSERT INTO penguins VALUES
 
 ``` duckdb
 SELECT * FROM penguins ORDER BY bill_length DESC;
+#> ┌───────────┬───────────┬─────────────┐
+#> │  species  │  island   │ bill_length │
+#> │  varchar  │  varchar  │   double    │
+#> ├───────────┼───────────┼─────────────┤
+#> │ Gentoo    │ Biscoe    │        47.3 │
+#> │ Chinstrap │ Dream     │        46.5 │
+#> │ Adelie    │ Torgersen │        39.1 │
+#> └───────────┴───────────┴─────────────┘
 ```
-
-    ┌───────────┬───────────┬─────────────┐
-    │  species  │  island   │ bill_length │
-    │  varchar  │  varchar  │   double    │
-    ├───────────┼───────────┼─────────────┤
-    │ Gentoo    │ Biscoe    │        47.3 │
-    │ Chinstrap │ Dream     │        46.5 │
-    │ Adelie    │ Torgersen │        39.1 │
-    └───────────┴───────────┴─────────────┘
 
 ### Database files
 
@@ -83,15 +81,14 @@ INSERT INTO scores VALUES ('Alice', 95), ('Bob', 87);
 
 ``` duckdb
 SELECT * FROM scores;
+#> ┌─────────┬───────┐
+#> │  name   │ score │
+#> │ varchar │ int32 │
+#> ├─────────┼───────┤
+#> │ Alice   │    95 │
+#> │ Bob     │    87 │
+#> └─────────┴───────┘
 ```
-
-    ┌─────────┬───────┐
-    │  name   │ score │
-    │ varchar │ int32 │
-    ├─────────┼───────┤
-    │ Alice   │    95 │
-    │ Bob     │    87 │
-    └─────────┴───────┘
 
 ### Output modes
 
@@ -101,21 +98,19 @@ the session:
 
 ``` duckdb
 SELECT * FROM scores;
+#> name,score
+#> Alice,95
+#> Bob,87
 ```
-
-    name,score
-    Alice,95
-    Bob,87
 
 ``` duckdb
 .mode markdown
 SELECT * FROM scores;
+#> | name  | score |
+#> |-------|------:|
+#> | Alice | 95    |
+#> | Bob   | 87    |
 ```
-
-    | name  | score |
-    |-------|------:|
-    | Alice | 95    |
-    | Bob   | 87    |
 
 ### Named sessions
 
@@ -125,25 +120,23 @@ workspaces:
 
 ``` duckdb
 SELECT 42 as answer;
+#> ┌────────┐
+#> │ answer │
+#> │ int32  │
+#> ├────────┤
+#> │     42 │
+#> └────────┘
 ```
-
-    ┌────────┐
-    │ answer │
-    │ int32  │
-    ├────────┤
-    │     42 │
-    └────────┘
 
 ``` duckdb
 SELECT 'still here' as status;
+#> ┌────────────┐
+#> │   status   │
+#> │  varchar   │
+#> ├────────────┤
+#> │ still here │
+#> └────────────┘
 ```
-
-    ┌────────────┐
-    │   status   │
-    │  varchar   │
-    ├────────────┤
-    │ still here │
-    └────────────┘
 
 ## Chunk options
 
