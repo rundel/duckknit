@@ -89,22 +89,20 @@ INSERT INTO scores VALUES ('Alice', 95), ('Bob', 87);
 
 ```` markdown
 ```{duckdb}
-#| ansi: html
 .tables
 ```
 ````
 
-    #> [38;5;172m ───── my ────── 
-    #> [00m[38;5;39m ──── main ───── 
-    #> [00m[90m┌───────────────┐[00m[90m
-    #> [00m[90m│    [00m[1mscores[00m[90m     │[00m[90m
-    #> [00m[90m│               │[00m[90m
-    #> [00m[90m│ [00mname[90m  [00m[90mvarchar[00m[90m [00m[90m│[00m[90m
-    #> [00m[90m│ [00mscore[90m [00m[90minteger[00m[90m [00m[90m│[00m[90m
-    #> [00m[90m│               │[00m[90m
-    #> [00m[90m│    [00m[90m2 rows[00m[90m     │[00m[90m
-    #> [00m[90m└───────────────┘[00m[90m
-    #> [00m___DUCKKNIT_4f05d176___
+    #> <span class="ansi ansi-color-172"> ───── my ────── 
+    #> </span><span class="ansi ansi-color-39"> ──── main ───── 
+    #> </span><span class="ansi ansi-color-0">┌───────────────┐</span>
+    #> │    <span class="ansi ansi-bold">scores</span><span class="ansi ansi-color-0">     │</span>
+    #> │               │
+    #> │ name<span class="ansi ansi-color-0">  </span>varchar │
+    #> │ score<span class="ansi ansi-color-0"> </span>integer │
+    #> │               │
+    #> │    2 rows     │
+    #> └───────────────┘
 
 ```` markdown
 ```{duckdb}

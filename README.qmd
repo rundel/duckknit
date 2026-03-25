@@ -11,7 +11,8 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "man/figures/README",
   out.width = "100%",
-  echo = "fenced"
+  echo = "fenced",
+  ansi = "html"
 )
 
 options(width = 80)
@@ -82,7 +83,6 @@ INSERT INTO scores VALUES ('Alice', 95), ('Bob', 87);
 ```
 
 ```{duckdb}
-#| ansi: html
 .tables
 ```
 
