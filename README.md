@@ -93,13 +93,13 @@ INSERT INTO scores VALUES ('Alice', 95), ('Bob', 87);
 ```
 ````
 
-    #> <span class="ansi ansi-color-172"> ───── my ────── 
-    #> </span><span class="ansi ansi-color-39"> ──── main ───── 
-    #> </span><span class="ansi ansi-color-0">┌───────────────┐</span>
-    #> │    <span class="ansi ansi-bold">scores</span><span class="ansi ansi-color-0">     │</span>
+    #>  ───── my ────── 
+    #>  ──── main ───── 
+    #> ┌───────────────┐
+    #> │    scores     │
     #> │               │
-    #> │ name<span class="ansi ansi-color-0">  </span>varchar │
-    #> │ score<span class="ansi ansi-color-0"> </span>integer │
+    #> │ name  varchar │
+    #> │ score integer │
     #> │               │
     #> │    2 rows     │
     #> └───────────────┘

@@ -11,8 +11,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "man/figures/README",
   out.width = "100%",
-  echo = "fenced",
-  ansi = "html"
+  echo = "fenced"
 )
 
 options(width = 80)
