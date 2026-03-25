@@ -36,6 +36,7 @@ The DuckDB CLI must be installed and available on your `PATH`. See the [DuckDB i
 You can verify your installation with:
 
 ```{bash}
+#| echo: true
 duckdb --version
 ```
 

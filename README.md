@@ -67,6 +67,7 @@ SELECT * FROM penguins ORDER BY bill_length DESC;
 ```
 ````
 
+
     #> ┌───────────┬───────────┬─────────────┐
     #> │  species  │  island   │ bill_length │
     #> │  varchar  │  varchar  │   double    │
