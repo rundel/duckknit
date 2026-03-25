@@ -12,7 +12,6 @@ navbar:
 home:
   sidebar:
     structure: [links, license, community, citation, authors, dev, toc]
-  strip_header: true
 
 reference:
   - title: Knitr Engine

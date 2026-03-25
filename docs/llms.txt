@@ -1,3 +1,5 @@
+# duckknit ![duckknit website](reference/figures/duckknit_hex.png)
+
 duckknit provides a [knitr](https://yihui.org/knitr/) chunk engine that
 interfaces with the [DuckDB](https://duckdb.org/) command-line
 interface. It allows you to write [duckdb](https://r.duckdb.org/) code

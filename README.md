@@ -2,7 +2,7 @@
 
 <!-- README.md is generated from README.qmd. Please edit that file -->
 
-# duckknit <a href="https://rundel.github.io/duckknit/"><img src="man/figures/duckknit_hex.png" align="right" height="139" alt="duckknit website" /></a>
+# duckknit <img src="man/figures/duckknit_hex.png" align="right" style="height:140px;max-width:200px;" alt="duckknit website" />
 
 <!-- badges: start -->
 
