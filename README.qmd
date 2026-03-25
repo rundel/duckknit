@@ -82,8 +82,14 @@ INSERT INTO scores VALUES ('Alice', 95), ('Bob', 87);
 ```
 
 ```{duckdb}
+.tables
+```
+
+```{duckdb}
 SELECT * FROM scores;
 ```
+
+
 
 ### Output modes
 

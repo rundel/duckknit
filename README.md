@@ -22,13 +22,10 @@ instructions.
 
 You can verify your installation with:
 
-```` markdown
-```{bash}
+``` bash
 duckdb --version
+#> v1.5.1 (Variegata) 7dbb2e646f
 ```
-````
-
-    #> v1.5.1 (Variegata) 7dbb2e646f
 
 ## Installation
 
@@ -67,7 +64,6 @@ SELECT * FROM penguins ORDER BY bill_length DESC;
 ```
 ````
 
-
     #> ┌───────────┬───────────┬─────────────┐
     #> │  species  │  island   │ bill_length │
     #> │  varchar  │  varchar  │   double    │
@@ -90,6 +86,24 @@ CREATE TABLE scores (name TEXT, score INT);
 INSERT INTO scores VALUES ('Alice', 95), ('Bob', 87);
 ```
 ````
+
+```` markdown
+```{duckdb}
+.tables
+```
+````
+
+    #> [38;5;172m ───── my ────── 
+    #> [00m[38;5;39m ──── main ───── 
+    #> [00m[90m┌───────────────┐[00m[90m
+    #> [00m[90m│    [00m[1mscores[00m[90m     │[00m[90m
+    #> [00m[90m│               │[00m[90m
+    #> [00m[90m│ [00mname[90m  [00m[90mvarchar[00m[90m [00m[90m│[00m[90m
+    #> [00m[90m│ [00mscore[90m [00m[90minteger[00m[90m [00m[90m│[00m[90m
+    #> [00m[90m│               │[00m[90m
+    #> [00m[90m│    [00m[90m2 rows[00m[90m     │[00m[90m
+    #> [00m[90m└───────────────┘[00m[90m
+    #> [00m___DUCKKNIT_43744f3a___
 
 ```` markdown
 ```{duckdb}
