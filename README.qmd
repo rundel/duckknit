@@ -6,6 +6,18 @@ format: gfm
 
 ```{r}
 #| include: false
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README",
+  out.width = "100%"
+)
+
+options(width = 80)
+```
+
+```{r}
+#| include: false
 library(duckknit)
 ```
 
