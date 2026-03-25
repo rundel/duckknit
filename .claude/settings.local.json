@@ -16,7 +16,8 @@
       "Bash(NOT_CRAN=true Rscript -e \"devtools::test\\(\\)\" 2>&1)",
       "Bash(Rscript -e 'devtools::document\\(\\)' 2>&1)",
       "Bash(Rscript -e 'devtools::install\\(quick = TRUE, quiet = TRUE\\)')",
-      "Bash(quarto render:*)"
+      "Bash(quarto render:*)",
+      "Bash(Rscript -e \"devtools::check\\(\\)\" 2>&1)"
     ]
   }
 }
