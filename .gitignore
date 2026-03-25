@@ -4,6 +4,8 @@
 .RData
 .httr-oauth
 .DS_Store
+*.duckdb
+*.duckdb.wal
 .quarto
 
 /.quarto/

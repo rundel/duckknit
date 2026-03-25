@@ -8,3 +8,5 @@
 ^\.claude$
 ^CLAUDE\.md$
 ^\.github$
+\.duckdb$
+\.duckdb\.wal$

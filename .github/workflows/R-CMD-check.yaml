@@ -50,7 +50,7 @@ jobs:
           curl -fsSL -o duckdb.zip https://github.com/duckdb/duckdb/releases/latest/download/duckdb_cli-windows-amd64.zip
           unzip duckdb.zip -d $HOME/bin
           echo "$HOME/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-          duckdb --version
+          & "$HOME/bin/duckdb.exe" --version
         shell: pwsh
 
       - uses: r-lib/actions/setup-pandoc@v2

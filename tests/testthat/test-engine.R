@@ -1,3 +1,9 @@
+duckdb_variant = function() {
+  ver = processx::run(duckknit:::find_duckdb(), "--version")$stdout
+  minor = as.integer(sub("^v\\d+\\.(\\d+)\\..*", "\\1", trimws(ver)))
+  if (minor <= 4) "v1.4" else "v1.5"
+}
+
 make_options = function(code, ...) {
   opts = list(
     code = code,
@@ -160,7 +166,7 @@ test_that("ansi=FALSE strips ANSI codes from .tables output", {
   eng_duckdb(make_options("CREATE TABLE ansi_t (id INT, name TEXT);"))
   result = eng_duckdb(make_options(".tables", ansi = FALSE))
 
-  expect_snapshot(cat(result))
+  expect_snapshot(cat(result), variant = duckdb_variant())
 })
 
 test_that("ansi=TRUE preserves ANSI codes in .tables output", {
@@ -169,7 +175,7 @@ test_that("ansi=TRUE preserves ANSI codes in .tables output", {
   eng_duckdb(make_options("CREATE TABLE ansi_t (id INT, name TEXT);"))
   result = eng_duckdb(make_options(".tables", ansi = TRUE))
 
-  expect_snapshot(cat(result))
+  expect_snapshot(cat(result), variant = duckdb_variant())
 })
 
 test_that("ansi='html' converts ANSI to HTML in .tables output", {
@@ -179,7 +185,7 @@ test_that("ansi='html' converts ANSI to HTML in .tables output", {
   eng_duckdb(make_options("CREATE TABLE ansi_t (id INT, name TEXT);"))
   result = eng_duckdb(make_options(".tables", ansi = "html"))
 
-  expect_snapshot(cat(result))
+  expect_snapshot(cat(result), variant = duckdb_variant())
 })
 
 test_that("counter resets after kill_all", {
