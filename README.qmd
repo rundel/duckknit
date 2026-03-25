@@ -130,6 +130,7 @@ duckdb_sitrep()
 Use `duckknit_list_sessions()` to get a tibble of sessions:
 
 ```{r}
+#| echo: true
 duckknit_list_sessions()
 ```
 

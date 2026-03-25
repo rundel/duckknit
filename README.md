@@ -213,18 +213,15 @@ duckdb_sitrep()
 
 Use `duckknit_list_sessions()` to get a tibble of sessions:
 
-```` markdown
-```{r}
+``` r
 duckknit_list_sessions()
+#> # A tibble: 3 × 4
+#>   session   status  db                                                active
+#>   <chr>     <chr>   <chr>                                             <lgl> 
+#> 1 analysis  running :memory:                                          TRUE  
+#> 2 session-1 running :memory:                                          FALSE 
+#> 3 session-2 running /Users/rundel/Desktop/Projects/duckknit/my.duckdb FALSE
 ```
-````
-
-    #> # A tibble: 3 × 4
-    #>   session   status  db                                                active
-    #>   <chr>     <chr>   <chr>                                             <lgl> 
-    #> 1 analysis  running :memory:                                          TRUE  
-    #> 2 session-1 running :memory:                                          FALSE 
-    #> 3 session-2 running /Users/rundel/Desktop/Projects/duckknit/my.duckdb FALSE
 
 You can also kill individual sessions or all sessions at once:
 
