@@ -22,10 +22,13 @@ instructions.
 
 You can verify your installation with:
 
-``` bash
+```` markdown
+```{bash}
 duckdb --version
-#> v1.5.1 (Variegata) 7dbb2e646f
 ```
+````
+
+    #> v1.5.1 (Variegata) 7dbb2e646f
 
 ## Installation
 
@@ -48,25 +51,30 @@ Then use `{duckdb}` chunks in your document. By default, chunks use an
 in-memory database and each chunk reuses the last active session, so
 state persists automatically:
 
-``` duckdb
+```` markdown
+```{duckdb}
 CREATE TABLE penguins (species TEXT, island TEXT, bill_length DOUBLE);
 INSERT INTO penguins VALUES
   ('Adelie',    'Torgersen', 39.1),
   ('Gentoo',    'Biscoe',    47.3),
   ('Chinstrap', 'Dream',     46.5);
 ```
+````
 
-``` duckdb
+```` markdown
+```{duckdb}
 SELECT * FROM penguins ORDER BY bill_length DESC;
-#> ┌───────────┬───────────┬─────────────┐
-#> │  species  │  island   │ bill_length │
-#> │  varchar  │  varchar  │   double    │
-#> ├───────────┼───────────┼─────────────┤
-#> │ Gentoo    │ Biscoe    │        47.3 │
-#> │ Chinstrap │ Dream     │        46.5 │
-#> │ Adelie    │ Torgersen │        39.1 │
-#> └───────────┴───────────┴─────────────┘
 ```
+````
+
+    #> ┌───────────┬───────────┬─────────────┐
+    #> │  species  │  island   │ bill_length │
+    #> │  varchar  │  varchar  │   double    │
+    #> ├───────────┼───────────┼─────────────┤
+    #> │ Gentoo    │ Biscoe    │        47.3 │
+    #> │ Chinstrap │ Dream     │        46.5 │
+    #> │ Adelie    │ Torgersen │        39.1 │
+    #> └───────────┴───────────┴─────────────┘
 
 ### Database files
 
@@ -74,21 +82,27 @@ Use the `db` chunk option to target a specific database file. A new
 session is created automatically and subsequent chunks without options
 continue using it:
 
-``` duckdb
+```` markdown
+```{duckdb}
+#| db: my.duckdb
 CREATE TABLE scores (name TEXT, score INT);
 INSERT INTO scores VALUES ('Alice', 95), ('Bob', 87);
 ```
+````
 
-``` duckdb
+```` markdown
+```{duckdb}
 SELECT * FROM scores;
-#> ┌─────────┬───────┐
-#> │  name   │ score │
-#> │ varchar │ int32 │
-#> ├─────────┼───────┤
-#> │ Alice   │    95 │
-#> │ Bob     │    87 │
-#> └─────────┴───────┘
 ```
+````
+
+    #> ┌─────────┬───────┐
+    #> │  name   │ score │
+    #> │ varchar │ int32 │
+    #> ├─────────┼───────┤
+    #> │ Alice   │    95 │
+    #> │ Bob     │    87 │
+    #> └─────────┴───────┘
 
 ### Output modes
 
@@ -96,21 +110,28 @@ Use the `mode` chunk option or the `.mode` dot-command to control output
 formatting. Mode changes made with `.mode` persist for the remainder of
 the session:
 
-``` duckdb
+```` markdown
+```{duckdb}
+#| mode: csv
 SELECT * FROM scores;
-#> name,score
-#> Alice,95
-#> Bob,87
 ```
+````
 
-``` duckdb
+    #> name,score
+    #> Alice,95
+    #> Bob,87
+
+```` markdown
+```{duckdb}
 .mode markdown
 SELECT * FROM scores;
-#> | name  | score |
-#> |-------|------:|
-#> | Alice | 95    |
-#> | Bob   | 87    |
 ```
+````
+
+    #> | name  | score |
+    #> |-------|------:|
+    #> | Alice | 95    |
+    #> | Bob   | 87    |
 
 ### Named sessions
 
@@ -118,25 +139,33 @@ The `session` option lets you give a session an explicit name. This is
 useful for switching between sessions or creating independent
 workspaces:
 
-``` duckdb
+```` markdown
+```{duckdb}
+#| session: analysis
 SELECT 42 as answer;
-#> ┌────────┐
-#> │ answer │
-#> │ int32  │
-#> ├────────┤
-#> │     42 │
-#> └────────┘
 ```
+````
 
-``` duckdb
+    #> ┌────────┐
+    #> │ answer │
+    #> │ int32  │
+    #> ├────────┤
+    #> │     42 │
+    #> └────────┘
+
+```` markdown
+```{duckdb}
+#| session: analysis
 SELECT 'still here' as status;
-#> ┌────────────┐
-#> │   status   │
-#> │  varchar   │
-#> ├────────────┤
-#> │ still here │
-#> └────────────┘
 ```
+````
+
+    #> ┌────────────┐
+    #> │   status   │
+    #> │  varchar   │
+    #> ├────────────┤
+    #> │ still here │
+    #> └────────────┘
 
 ## Chunk options
 
