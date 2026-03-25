@@ -14,7 +14,9 @@
       "Bash(Rscript -e \"devtools::document\\(\\)\")",
       "Bash(Rscript -e 'devtools::load_all\\(\\); rmarkdown::render\\(\"test.Rmd\", quiet = TRUE\\)')",
       "Bash(NOT_CRAN=true Rscript -e \"devtools::test\\(\\)\" 2>&1)",
-      "Bash(Rscript -e 'devtools::document\\(\\)' 2>&1)"
+      "Bash(Rscript -e 'devtools::document\\(\\)' 2>&1)",
+      "Bash(Rscript -e 'devtools::install\\(quick = TRUE, quiet = TRUE\\)')",
+      "Bash(quarto render:*)"
     ]
   }
 }

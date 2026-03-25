@@ -2,7 +2,7 @@
 
 <!-- README.md is generated from README.qmd. Please edit that file -->
 
-# duckknit
+# duckknit <a href="https://rundel.github.io/duckknit/"><img src="man/figures/duckknit_hex.png" align="right" height="139" alt="duckknit website" /></a>
 
 <!-- badges: start -->
 
@@ -201,3 +201,8 @@ location:
 ``` r
 options(duckknit.duckdb = "/path/to/duckdb")
 ```
+
+## Disclaimer
+
+This project was vibe coded in an afternoon using [Claude
+Code](https://claude.ai/code). The hex logo was generated via ChatGPT.

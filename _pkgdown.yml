@@ -1,6 +1,17 @@
 url: ~
 template:
   bootstrap: 5
+  bslib:
+    pkgdown-nav-height: 100px
+
+navbar:
+  structure:
+    left: [intro, reference]
+    right: [search, github]
+
+home:
+  sidebar:
+    structure: [links, license, community, citation, authors, dev, toc]
 
 reference:
   - title: Knitr Engine
