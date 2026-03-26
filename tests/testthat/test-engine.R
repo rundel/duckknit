@@ -12,6 +12,7 @@ make_options = function(code, ...) {
     eval = TRUE,
     echo = TRUE,
     results = "markup",
+    collapse = FALSE,
     include = TRUE,
     error = FALSE,
     label = "test-chunk",
@@ -200,4 +201,112 @@ test_that("counter resets after kill_all", {
 
   eng_duckdb(make_options("SELECT 2;"))
   expect_true("session-1" %in% ls(.sessions))
+})
+
+# parse_commands tests
+
+test_that("parse_commands: single SQL", {
+  expect_equal(
+    parse_commands("SELECT 1;"),
+    list("SELECT 1;")
+  )
+})
+
+test_that("parse_commands: multiple SQL", {
+  expect_equal(
+    parse_commands(c("SELECT 1;", "SELECT 2;")),
+    list("SELECT 1;", "SELECT 2;")
+  )
+})
+
+test_that("parse_commands: multi-line SQL", {
+  expect_equal(
+    parse_commands(c("SELECT", "  *", "FROM t;")),
+    list(c("SELECT", "  *", "FROM t;"))
+  )
+})
+
+test_that("parse_commands: single dot-command", {
+  expect_equal(
+    parse_commands(".tables"),
+    list(".tables")
+  )
+})
+
+test_that("parse_commands: multiple dot-commands", {
+  expect_equal(
+    parse_commands(c(".mode csv", ".tables")),
+    list(".mode csv", ".tables")
+  )
+})
+
+test_that("parse_commands: mixed dot and SQL", {
+  expect_equal(
+    parse_commands(c(".mode csv", "SELECT 1;", ".tables")),
+    list(".mode csv", "SELECT 1;", ".tables")
+  )
+})
+
+test_that("parse_commands: blank lines between commands", {
+  expect_equal(
+    parse_commands(c("SELECT 1;", "", "SELECT 2;")),
+    list("SELECT 1;", "SELECT 2;")
+  )
+})
+
+test_that("parse_commands: trailing SQL without semicolon", {
+  expect_equal(
+    parse_commands(c("SELECT 1")),
+    list("SELECT 1")
+  )
+})
+
+test_that("parse_commands: dot-command flushes incomplete SQL", {
+  expect_equal(
+    parse_commands(c("SELECT", ".tables")),
+    list("SELECT", ".tables")
+  )
+})
+
+# interleaved output tests
+
+test_that("multiple commands produce interleaved output", {
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  opts = make_options(c("SELECT 1 as a;", "SELECT 2 as b;"))
+  result = eng_duckdb(opts)
+
+  a_pos = regexpr("SELECT 1 as a;", result)
+  a_out_pos = regexpr("\\b1\\b", substring(result, a_pos + 14))
+  b_pos = regexpr("SELECT 2 as b;", result)
+  expect_true(a_pos < b_pos)
+  expect_true(grepl("a", result))
+  expect_true(grepl("b", result))
+})
+
+test_that("collapse = TRUE batches all code then output", {
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  single = eng_duckdb(make_options(c("SELECT 1 as a;", "SELECT 2 as b;"), collapse = TRUE))
+  multi = eng_duckdb(make_options(c("SELECT 1 as a;", "SELECT 2 as b;"), collapse = FALSE))
+
+  expect_false(identical(single, multi))
+})
+
+test_that("error stops at first failing command", {
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  opts = make_options(c("SELECT 1;", "SELCT bad;", "SELECT 3;"))
+  expect_error(eng_duckdb(opts), "Error")
+})
+
+test_that("error = TRUE continues after failing command", {
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  opts = make_options(c("SELECT 1 as a;", "SELCT bad;", "SELECT 3 as c;"), error = TRUE)
+  result = eng_duckdb(opts)
+
+  expect_true(grepl("a", result))
+  expect_true(grepl("Error", result))
+  expect_true(grepl("c", result))
 })

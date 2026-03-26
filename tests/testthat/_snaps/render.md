@@ -17,6 +17,7 @@
       ## Create and query
       
           CREATE TABLE students (id INT, name TEXT, grade DOUBLE);
+      
           INSERT INTO students VALUES (1, 'Alice', 95.5), (2, 'Bob', 87.3), (3, 'Carol', 92.1);
       
           SELECT * FROM students ORDER BY grade DESC;
@@ -42,6 +43,7 @@
       ## Inline mode change persists
       
           .mode markdown
+      
           SELECT name, grade FROM students WHERE grade > 90;
       
           ## | name  | grade |

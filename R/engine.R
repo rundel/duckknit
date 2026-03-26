@@ -21,29 +21,50 @@
 #' @return A character string of formatted output for knitr.
 #' @export
 eng_duckdb = function(options) {
-  code = paste(options$code, collapse = "\n")
-
   if (!isTRUE(options$eval)) {
     return(knitr::engine_output(options, code = options$code, out = ""))
   }
 
   timeout = options$timeout %||% 30000L
+  ansi = options$ansi %||% FALSE
 
   session_name = resolve_session(options$session, options$db)
   session = duckknit_get_session(session_name, options$db %||% ":memory:")
   .state$last_session = session_name
 
-  exec_code = code
   if (!is.null(options$mode)) {
-    exec_code = paste0(".mode ", options$mode, "\n", exec_code)
+    duckknit_exec(session, paste0(".mode ", options$mode), timeout = timeout)
   }
 
-  result = duckknit_exec(session, exec_code, timeout = timeout)
+  cmds = parse_commands(options$code)
 
-  ansi = options$ansi %||% FALSE
-  result$stdout = process_ansi(result$stdout, ansi)
-  result$stderr = process_ansi(result$stderr, ansi)
+  results = list()
+  for (cmd in cmds) {
+    cmd_code = paste(cmd, collapse = "\n")
+    result = duckknit_exec(session, cmd_code, timeout = timeout)
+    result$stdout = process_ansi(result$stdout, ansi)
+    result$stderr = process_ansi(result$stderr, ansi)
+    out = format_result(result, options)
+    results = c(results, list(list(code = cmd, out = out)))
+  }
 
+  if (length(results) <= 1 || isTRUE(options$collapse)) {
+    all_code = unlist(lapply(results, `[[`, "code"))
+    if (is.null(all_code)) all_code = options$code
+    all_out = paste(
+      vapply(results, `[[`, character(1), "out"),
+      collapse = "\n"
+    )
+    return(knitr::engine_output(options, code = all_code, out = all_out))
+  }
+
+  parts = vapply(results, function(r) {
+    knitr::engine_output(options, code = r$code, out = r$out)
+  }, character(1))
+  paste(parts, collapse = "\n")
+}
+
+format_result = function(result, options) {
   if (nzchar(result$stderr)) {
     if (isTRUE(options$error)) {
       out = result$stderr
@@ -56,8 +77,31 @@ eng_duckdb = function(options) {
   } else {
     out = result$stdout
   }
+  out
+}
 
-  knitr::engine_output(options, code = options$code, out = out)
+parse_commands = function(lines) {
+  cmds = list()
+  current = character(0)
+  for (line in lines) {
+    trimmed = trimws(line)
+    if (nchar(trimmed) == 0 && length(current) == 0) next
+    if (grepl("^\\.", trimmed)) {
+      if (length(current) > 0) {
+        cmds = c(cmds, list(current))
+        current = character(0)
+      }
+      cmds = c(cmds, list(line))
+    } else {
+      current = c(current, line)
+      if (grepl(";\\s*$", trimmed)) {
+        cmds = c(cmds, list(current))
+        current = character(0)
+      }
+    }
+  }
+  if (length(current) > 0) cmds = c(cmds, list(current))
+  cmds
 }
 
 resolve_session = function(session, db) {
