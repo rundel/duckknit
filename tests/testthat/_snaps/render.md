@@ -95,6 +95,9 @@
       
       ``` duckdb
       CREATE TABLE students (id INT, name TEXT, grade DOUBLE);
+      ```
+      
+      ``` duckdb
       INSERT INTO students VALUES (1, 'Alice', 95.5), (2, 'Bob', 87.3), (3, 'Carol', 92.1);
       ```
       
@@ -126,6 +129,9 @@
       
       ``` duckdb
       .mode markdown
+      ```
+      
+      ``` duckdb
       SELECT name, grade FROM students WHERE grade > 90;
       ```
       
