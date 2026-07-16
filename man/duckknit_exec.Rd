@@ -11,7 +11,8 @@ duckknit_exec(session, code, timeout = 30000L)
 
 \item{code}{Character. SQL code to execute.}
 
-\item{timeout}{Integer. Maximum milliseconds to wait for output.}
+\item{timeout}{Integer. Maximum milliseconds to wait for output. An error
+is thrown if the command does not complete within this time.}
 }
 \value{
 A list with \code{stdout} and \code{stderr} character strings.

@@ -33,6 +33,30 @@ test_that("sitrep handles missing cli", {
   expect_true(is.na(result$version))
 })
 
+test_that("list_sessions returns all sessions when last_session is NULL", {
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  duckknit_start_session("ls1", ":memory:")
+  duckknit_start_session("ls2", ":memory:")
+
+  result = duckknit_list_sessions()
+
+  expect_equal(nrow(result), 2)
+  expect_false(any(result$active))
+})
+
+test_that("list_sessions marks last session active", {
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  duckknit_start_session("ls1", ":memory:")
+  duckknit_start_session("ls2", ":memory:")
+  .state$last_session = "ls2"
+
+  result = duckknit_list_sessions()
+
+  expect_equal(result$active, result$session == "ls2")
+})
+
 test_that("sitrep output includes key info", {
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 

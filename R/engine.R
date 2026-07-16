@@ -29,7 +29,7 @@ eng_duckdb = function(options) {
   ansi = options$ansi %||% FALSE
 
   session_name = resolve_session(options$session, options$db)
-  session = duckknit_get_session(session_name, options$db %||% ":memory:")
+  session = duckknit_get_session(session_name, options$db)
   .state$last_session = session_name
 
   if (!is.null(options$mode)) {
@@ -128,6 +128,9 @@ strip_ansi = function(x) {
 
 process_ansi = function(x, ansi) {
   if (identical(ansi, "html")) {
+    if (!requireNamespace("cli", quietly = TRUE)) {
+      stop("The cli package is required for ansi = \"html\".", call. = FALSE)
+    }
     return(cli::ansi_html(x))
   }
   if (isTRUE(ansi)) {

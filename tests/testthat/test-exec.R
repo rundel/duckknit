@@ -75,6 +75,27 @@ test_that("exec on dead session errors", {
   )
 })
 
+test_that("exec errors on timeout", {
+  s = duckknit_get_session("exec_timeout", ":memory:")
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  expect_error(
+    duckknit_exec(s, "SELECT 1;", timeout = 0L),
+    "timed out"
+  )
+})
+
+test_that("exec does not advance RNG state", {
+  s = duckknit_get_session("exec_rng", ":memory:")
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  set.seed(42)
+  seed_before = get(".Random.seed", envir = globalenv())
+  duckknit_exec(s, "SELECT 1;")
+
+  expect_identical(get(".Random.seed", envir = globalenv()), seed_before)
+})
+
 test_that("sentinel is stripped from output", {
   s = duckknit_get_session("exec_sentinel", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)

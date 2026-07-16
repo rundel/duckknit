@@ -5,7 +5,8 @@
 #'
 #' @param session A `processx::process` object (a running DuckDB CLI session).
 #' @param code Character. SQL code to execute.
-#' @param timeout Integer. Maximum milliseconds to wait for output.
+#' @param timeout Integer. Maximum milliseconds to wait for output. An error
+#'   is thrown if the command does not complete within this time.
 #'
 #' @return A list with `stdout` and `stderr` character strings.
 #' @export
@@ -14,8 +15,11 @@ duckknit_exec = function(session, code, timeout = 30000L) {
     stop("DuckDB session is no longer running.", call. = FALSE)
   }
 
+  # Counter-based sentinel so execution never touches the global RNG state,
+  # which would break reproducibility of documents that set a seed
+  .state$exec_counter = .state$exec_counter + 1L
   sentinel = paste0(
-    "___DUCKKNIT_", as.hexmode(sample.int(.Machine$integer.max, 1)), "___"
+    "___DUCKKNIT_", Sys.getpid(), "_", .state$exec_counter, "___"
   )
 
   session$read_output()
@@ -25,17 +29,24 @@ duckknit_exec = function(session, code, timeout = 30000L) {
   session$write_input(input)
 
   stdout_buf = ""
-  elapsed = 0L
   poll_interval = 100L
+  deadline = Sys.time() + timeout / 1000
+  found = FALSE
 
-  while (elapsed < timeout) {
+  while (Sys.time() < deadline) {
     session$poll_io(poll_interval)
     chunk = session$read_output()
     if (nchar(chunk) > 0) {
       stdout_buf = paste0(stdout_buf, chunk)
     }
-    if (grepl(sentinel, stdout_buf, fixed = TRUE)) break
-    elapsed = elapsed + poll_interval
+    if (grepl(sentinel, stdout_buf, fixed = TRUE)) {
+      found = TRUE
+      break
+    }
+  }
+
+  if (!found) {
+    stop("DuckDB command timed out after ", timeout, " ms.", call. = FALSE)
   }
 
   stderr_buf = session$read_error()

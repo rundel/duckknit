@@ -2,6 +2,7 @@
 .session_dbs = new.env(parent = emptyenv())
 .state = new.env(parent = emptyenv())
 .state$counter = 0L
+.state$exec_counter = 0L
 .state$last_session = NULL
 
 next_session_name = function() {
@@ -97,21 +98,36 @@ duckknit_start_session = function(name, db = ":memory:") {
 #' Get or create a DuckDB CLI session
 #'
 #' Returns an existing session if one with the given name is alive, otherwise
-#' starts a new one.
+#' starts a new one. If `db` is supplied and an existing live session is
+#' connected to a different database, an error is raised.
 #'
-#' @inheritParams duckknit_start_session
+#' @param name Character. Name for the session.
+#' @param db Character. Path to a DuckDB database file, or `":memory:"` for an
+#'   in-memory database. When `NULL` (the default), an existing session is
+#'   returned regardless of its database and a new session uses `":memory:"`.
 #'
 #' @return A `processx::process` object (invisibly).
 #' @export
-duckknit_get_session = function(name, db = ":memory:") {
+duckknit_get_session = function(name, db = NULL) {
   if (name %in% ls(.sessions)) {
     proc = .sessions[[name]]
     if (proc$is_alive()) {
+      if (!is.null(db)) {
+        registered = if (name %in% ls(.session_dbs)) .session_dbs[[name]] else ":memory:"
+        requested = if (db == ":memory:") ":memory:" else norm_db_path(db)
+        if (registered != requested) {
+          stop(
+            "Session '", name, "' is already connected to '", registered,
+            "', not '", db, "'. Kill it first or use a different session name.",
+            call. = FALSE
+          )
+        }
+      }
       return(invisible(proc))
     }
   }
 
-  duckknit_start_session(name, db)
+  duckknit_start_session(name, db %||% ":memory:")
 }
 
 #' Kill a DuckDB CLI session

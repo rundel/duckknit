@@ -80,6 +80,10 @@ duckknit_list_sessions = function() {
     db = vapply(session_names, function(nm) {
       if (nm %in% ls(.session_dbs)) .session_dbs[[nm]] else ":memory:"
     }, character(1)),
-    active = session_names == .state$last_session
+    active = if (is.null(.state$last_session)) {
+      FALSE
+    } else {
+      session_names == .state$last_session
+    }
   )
 }

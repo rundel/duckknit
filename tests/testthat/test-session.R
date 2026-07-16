@@ -106,6 +106,29 @@ test_that("db tracking is cleaned up on session kill", {
   expect_false("tracked" %in% ls(.session_dbs))
 })
 
+test_that("get_session errors when db conflicts with existing session", {
+  tmp = tempfile(fileext = ".duckdb")
+  on.exit({
+    duckknit_kill_all_sessions()
+    unlink(tmp)
+  }, add = TRUE)
+
+  duckknit_get_session("conflict_mem", ":memory:")
+  expect_error(
+    duckknit_get_session("conflict_mem", tmp),
+    "already connected"
+  )
+  expect_no_error(duckknit_get_session("conflict_mem"))
+  expect_no_error(duckknit_get_session("conflict_mem", ":memory:"))
+
+  duckknit_get_session("conflict_file", tmp)
+  expect_error(
+    duckknit_get_session("conflict_file", ":memory:"),
+    "already connected"
+  )
+  expect_no_error(duckknit_get_session("conflict_file", tmp))
+})
+
 test_that("find_duckdb respects duckknit.duckdb option", {
   on.exit(options(duckknit.duckdb = NULL), add = TRUE)
 

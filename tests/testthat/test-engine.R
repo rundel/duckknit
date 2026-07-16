@@ -1,11 +1,3 @@
-duckdb_variant = function() {
-  ver = processx::run(duckknit:::find_duckdb(), "--version")$stdout
-  minor = as.integer(sub("^v\\d+\\.(\\d+)\\..*", "\\1", trimws(ver)))
-  version = if (minor <= 4) "v1.4" else "v1.5"
-  os = if (.Platform$OS.type == "windows") "windows" else "unix"
-  paste(version, os, sep = "-")
-}
-
 make_options = function(code, ...) {
   opts = list(
     code = code,
@@ -114,6 +106,20 @@ test_that("engine session option sets last session", {
 
   eng_duckdb(make_options("SELECT 3;"))
   expect_equal(.state$last_session, "other")
+})
+
+test_that("engine errors when session and db options conflict", {
+  tmp = tempfile(fileext = ".duckdb")
+  on.exit({
+    duckknit_kill_all_sessions()
+    unlink(tmp)
+  }, add = TRUE)
+
+  eng_duckdb(make_options("SELECT 1;", session = "sdb"))
+  expect_error(
+    eng_duckdb(make_options("SELECT 1;", session = "sdb", db = tmp)),
+    "already connected"
+  )
 })
 
 test_that("engine mode option changes output format", {

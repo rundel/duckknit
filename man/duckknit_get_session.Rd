@@ -4,18 +4,20 @@
 \alias{duckknit_get_session}
 \title{Get or create a DuckDB CLI session}
 \usage{
-duckknit_get_session(name, db = ":memory:")
+duckknit_get_session(name, db = NULL)
 }
 \arguments{
 \item{name}{Character. Name for the session.}
 
 \item{db}{Character. Path to a DuckDB database file, or \code{":memory:"} for an
-in-memory database.}
+in-memory database. When \code{NULL} (the default), an existing session is
+returned regardless of its database and a new session uses \code{":memory:"}.}
 }
 \value{
 A \code{processx::process} object (invisibly).
 }
 \description{
 Returns an existing session if one with the given name is alive, otherwise
-starts a new one.
+starts a new one. If \code{db} is supplied and an existing live session is
+connected to a different database, an error is raised.
 }
