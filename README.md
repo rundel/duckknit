@@ -2,7 +2,7 @@
 
 <!-- README.md is generated from README.qmd. Please edit that file -->
 
-# duckknit <img src="man/figures/duckknit_hex.png" align="right" style="height:140px;max-width:200px;" alt="duckknit website" />
+# duckknit <img src="man/figures/logo.png" align="right" style="height:140px;max-width:200px;" alt="duckknit website" />
 
 <!-- badges: start -->
 

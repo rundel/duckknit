@@ -1,12 +1,13 @@
 # Get or create a DuckDB CLI session
 
 Returns an existing session if one with the given name is alive,
-otherwise starts a new one.
+otherwise starts a new one. If `db` is supplied and an existing live
+session is connected to a different database, an error is raised.
 
 ## Usage
 
 ``` r
-duckknit_get_session(name, db = ":memory:")
+duckknit_get_session(name, db = NULL)
 ```
 
 ## Arguments
@@ -18,7 +19,9 @@ duckknit_get_session(name, db = ":memory:")
 - db:
 
   Character. Path to a DuckDB database file, or `":memory:"` for an
-  in-memory database.
+  in-memory database. When `NULL` (the default), an existing session is
+  returned regardless of its database and a new session uses
+  `":memory:"`.
 
 ## Value
 

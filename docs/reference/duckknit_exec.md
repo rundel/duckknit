@@ -23,7 +23,8 @@ duckknit_exec(session, code, timeout = 30000L)
 
 - timeout:
 
-  Integer. Maximum milliseconds to wait for output.
+  Integer. Maximum milliseconds to wait for output. An error is thrown
+  if the command does not complete within this time.
 
 ## Value
 

@@ -22,7 +22,7 @@ options(width = 80)
 library(duckknit)
 ```
 
-# duckknit <img src="man/figures/duckknit_hex.png" align="right" style="height:140px;max-width:200px;" alt="duckknit website" />
+# duckknit <img src="man/figures/logo.png" align="right" style="height:140px;max-width:200px;" alt="duckknit website" />
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/rundel/duckknit/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rundel/duckknit/actions/workflows/R-CMD-check.yaml)

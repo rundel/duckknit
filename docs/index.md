@@ -1,4 +1,4 @@
-# duckknit ![duckknit website](reference/figures/duckknit_hex.png)
+# duckknit
 
 duckknit provides a [knitr](https://yihui.org/knitr/) chunk engine that
 interfaces with the [DuckDB](https://duckdb.org/) command-line
