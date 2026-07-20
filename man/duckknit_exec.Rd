@@ -21,3 +21,11 @@ A list with \code{stdout} and \code{stderr} character strings.
 Sends SQL code to a running DuckDB CLI process and captures the output using
 a sentinel-based detection mechanism.
 }
+\examples{
+\dontshow{if (nzchar(Sys.which("duckdb"))) withAutoprint(\{ # examplesIf}
+s = duckknit_start_session("demo")
+result = duckknit_exec(s, "SELECT 1 + 1 AS two;")
+cat(result$stdout)
+duckknit_kill_session("demo")
+\dontshow{\}) # examplesIf}
+}

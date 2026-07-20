@@ -18,3 +18,10 @@ A \code{processx::process} object (invisibly).
 \description{
 Launches a persistent DuckDB CLI process connected to the specified database.
 }
+\examples{
+\dontshow{if (nzchar(Sys.which("duckdb"))) withAutoprint(\{ # examplesIf}
+s = duckknit_start_session("demo")
+s$is_alive()
+duckknit_kill_session("demo")
+\dontshow{\}) # examplesIf}
+}

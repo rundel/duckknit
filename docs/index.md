@@ -17,13 +17,13 @@ You can verify your installation with:
 
 ``` r
 
-duckdb_sitrep()
+duckknit_sitrep()
 #> duckknit situation report
 #> ========================
 #> 
 #> DuckDB CLI
 #>   Path:    /opt/homebrew/bin/duckdb 
-#>   Version: v1.5.1 (Variegata) 7dbb2e646f 
+#>   Version: v1.5.4 (Variegata) 08e34c447b 
 #> 
 #> Sessions: 0 active
 ```
@@ -154,6 +154,7 @@ SELECT * FROM scores;
 ````
 
 ``` R
+#> 
 #> | name  | score |
 #> |-------|------:|
 #> | Alice | 95    |
@@ -201,12 +202,12 @@ SELECT 'still here' as status;
 ### Managing sessions
 
 Use
-[`duckdb_sitrep()`](https://rundel.github.io/duckknit/reference/duckdb_sitrep.md)
+[`duckknit_sitrep()`](https://rundel.github.io/duckknit/reference/duckknit_sitrep.md)
 to see active sessions. The `*` marks the last used session:
 
 ```` markdown
 ```{r}
-duckdb_sitrep()
+duckknit_sitrep()
 ```
 ````
 
@@ -216,7 +217,7 @@ duckdb_sitrep()
 #> 
 #> DuckDB CLI
 #>   Path:    /opt/homebrew/bin/duckdb 
-#>   Version: v1.5.1 (Variegata) 7dbb2e646f 
+#>   Version: v1.5.4 (Variegata) 08e34c447b 
 #> 
 #> Sessions: 3 active
 #>   - analysis (running) -> :memory:  * 

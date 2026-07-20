@@ -36,4 +36,4 @@ reference:
   - title: Diagnostics
     desc: Inspect the current state of the DuckDB CLI and active sessions.
     contents:
-      - duckdb_sitrep
+      - duckknit_sitrep

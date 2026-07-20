@@ -21,3 +21,11 @@ Returns an existing session if one with the given name is alive, otherwise
 starts a new one. If \code{db} is supplied and an existing live session is
 connected to a different database, an error is raised.
 }
+\examples{
+\dontshow{if (nzchar(Sys.which("duckdb"))) withAutoprint(\{ # examplesIf}
+s1 = duckknit_get_session("demo")
+s2 = duckknit_get_session("demo")
+identical(s1$get_pid(), s2$get_pid())
+duckknit_kill_session("demo")
+\dontshow{\}) # examplesIf}
+}

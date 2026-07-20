@@ -1,4 +1,5 @@
 test_that("duckknit_start_session creates a live process", {
+  skip_if_no_duckdb()
   s = duckknit_start_session("test_start", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -7,6 +8,7 @@ test_that("duckknit_start_session creates a live process", {
 })
 
 test_that("duckknit_get_session returns existing session", {
+  skip_if_no_duckdb()
   s1 = duckknit_get_session("test_get", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -15,6 +17,7 @@ test_that("duckknit_get_session returns existing session", {
 })
 
 test_that("duckknit_get_session restarts dead session", {
+  skip_if_no_duckdb()
   s1 = duckknit_get_session("test_restart", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -28,6 +31,7 @@ test_that("duckknit_get_session restarts dead session", {
 })
 
 test_that("duckknit_kill_session removes session from registry", {
+  skip_if_no_duckdb()
   duckknit_start_session("test_kill", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -42,6 +46,7 @@ test_that("duckknit_kill_session on nonexistent session is a no-op", {
 })
 
 test_that("duckknit_kill_all_sessions clears all sessions", {
+  skip_if_no_duckdb()
   duckknit_start_session("a", ":memory:")
   duckknit_start_session("b", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
@@ -53,6 +58,7 @@ test_that("duckknit_kill_all_sessions clears all sessions", {
 })
 
 test_that("concurrent file db sessions are rejected", {
+  skip_if_no_duckdb()
   tmp = tempfile(fileext = ".duckdb")
   on.exit({
     duckknit_kill_all_sessions()
@@ -68,6 +74,7 @@ test_that("concurrent file db sessions are rejected", {
 })
 
 test_that("file db can be reused after killing prior session", {
+  skip_if_no_duckdb()
   tmp = tempfile(fileext = ".duckdb")
   on.exit({
     duckknit_kill_all_sessions()
@@ -82,6 +89,7 @@ test_that("file db can be reused after killing prior session", {
 })
 
 test_that("multiple in-memory sessions are allowed", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   s1 = duckknit_start_session("mem1", ":memory:")
@@ -93,6 +101,7 @@ test_that("multiple in-memory sessions are allowed", {
 })
 
 test_that("db tracking is cleaned up on session kill", {
+  skip_if_no_duckdb()
   tmp = tempfile(fileext = ".duckdb")
   on.exit({
     duckknit_kill_all_sessions()
@@ -107,6 +116,7 @@ test_that("db tracking is cleaned up on session kill", {
 })
 
 test_that("get_session errors when db conflicts with existing session", {
+  skip_if_no_duckdb()
   tmp = tempfile(fileext = ".duckdb")
   on.exit({
     duckknit_kill_all_sessions()
@@ -140,6 +150,7 @@ test_that("find_duckdb respects duckknit.duckdb option", {
 })
 
 test_that("kill_all resets counter and last_session", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   duckknit_start_session("s1", ":memory:")
@@ -153,6 +164,7 @@ test_that("kill_all resets counter and last_session", {
 })
 
 test_that("kill_session clears last_session if it was the killed session", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   duckknit_start_session("s1", ":memory:")
@@ -163,6 +175,7 @@ test_that("kill_session clears last_session if it was the killed session", {
 })
 
 test_that("kill_session preserves last_session if different session killed", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   duckknit_start_session("s1", ":memory:")
@@ -174,6 +187,7 @@ test_that("kill_session preserves last_session if different session killed", {
 })
 
 test_that("find_session_by_db finds existing session for file db", {
+  skip_if_no_duckdb()
   tmp = tempfile(fileext = ".duckdb")
   on.exit({
     duckknit_kill_all_sessions()

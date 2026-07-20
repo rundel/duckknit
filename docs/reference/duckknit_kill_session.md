@@ -12,4 +12,16 @@ duckknit_kill_session(name)
 
 - name:
 
-  Character. Name of the session to kill.
+  Character. Name of the session to kill. Killing a session that does
+  not exist is a no-op.
+
+## Value
+
+`NULL` (invisibly). Called for its side effect.
+
+## Examples
+
+``` r
+duckknit_start_session("demo")
+duckknit_kill_session("demo")
+```

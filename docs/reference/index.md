@@ -33,5 +33,5 @@ Send SQL to a DuckDB CLI session and capture output.
 
 Inspect the current state of the DuckDB CLI and active sessions.
 
-- [`duckdb_sitrep()`](https://rundel.github.io/duckknit/reference/duckdb_sitrep.md)
+- [`duckknit_sitrep()`](https://rundel.github.io/duckknit/reference/duckknit_sitrep.md)
   : DuckDB CLI situation report

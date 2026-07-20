@@ -16,6 +16,7 @@ make_options = function(code, ...) {
 }
 
 test_that("engine returns output for SELECT", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   opts = make_options("SELECT 1 as val;")
@@ -36,6 +37,7 @@ test_that("engine respects eval = FALSE", {
 })
 
 test_that("engine auto-creates session-1 for first chunk", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   eng_duckdb(make_options("SELECT 1;"))
@@ -45,6 +47,7 @@ test_that("engine auto-creates session-1 for first chunk", {
 })
 
 test_that("engine reuses last session when no options given", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   eng_duckdb(make_options("CREATE TABLE lt (id INT);"))
@@ -56,6 +59,7 @@ test_that("engine reuses last session when no options given", {
 })
 
 test_that("engine db option creates new auto-named session", {
+  skip_if_no_duckdb()
   tmp = tempfile(fileext = ".duckdb")
   on.exit({
     duckknit_kill_all_sessions()
@@ -71,6 +75,7 @@ test_that("engine db option creates new auto-named session", {
 })
 
 test_that("engine db option reuses existing session for same db", {
+  skip_if_no_duckdb()
   tmp = tempfile(fileext = ".duckdb")
   on.exit({
     duckknit_kill_all_sessions()
@@ -86,6 +91,7 @@ test_that("engine db option reuses existing session for same db", {
 })
 
 test_that("engine session option creates named session", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   eng_duckdb(make_options("CREATE TABLE st (x INT);", session = "custom"))
@@ -96,6 +102,7 @@ test_that("engine session option creates named session", {
 })
 
 test_that("engine session option sets last session", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   eng_duckdb(make_options("SELECT 1;"))
@@ -109,6 +116,7 @@ test_that("engine session option sets last session", {
 })
 
 test_that("engine errors when session and db options conflict", {
+  skip_if_no_duckdb()
   tmp = tempfile(fileext = ".duckdb")
   on.exit({
     duckknit_kill_all_sessions()
@@ -123,6 +131,7 @@ test_that("engine errors when session and db options conflict", {
 })
 
 test_that("engine mode option changes output format", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   eng_duckdb(make_options("CREATE TABLE mode_t (a INT);"))
@@ -134,6 +143,7 @@ test_that("engine mode option changes output format", {
 })
 
 test_that("engine stops on error by default", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   expect_error(
@@ -143,6 +153,7 @@ test_that("engine stops on error by default", {
 })
 
 test_that("engine displays error when error = TRUE", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   result = eng_duckdb(make_options("SELCT bad;", error = TRUE))
@@ -151,6 +162,7 @@ test_that("engine displays error when error = TRUE", {
 })
 
 test_that("engine handles multi-line code vector", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   opts = make_options(c("CREATE TABLE ml (id INT);", "INSERT INTO ml VALUES (7);"))
@@ -161,6 +173,7 @@ test_that("engine handles multi-line code vector", {
 })
 
 test_that("engine does not echo mode command in displayed code", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   opts = make_options("SELECT 1 as x;", mode = "csv")
@@ -170,6 +183,7 @@ test_that("engine does not echo mode command in displayed code", {
 })
 
 test_that("ansi=FALSE strips ANSI codes from .tables output", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   eng_duckdb(make_options("CREATE TABLE ansi_t (id INT, name TEXT);"))
@@ -179,6 +193,7 @@ test_that("ansi=FALSE strips ANSI codes from .tables output", {
 })
 
 test_that("ansi=TRUE preserves ANSI codes in .tables output", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   eng_duckdb(make_options("CREATE TABLE ansi_t (id INT, name TEXT);"))
@@ -188,6 +203,7 @@ test_that("ansi=TRUE preserves ANSI codes in .tables output", {
 })
 
 test_that("ansi='html' converts ANSI to HTML in .tables output", {
+  skip_if_no_duckdb()
   skip_if_not_installed("cli")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -198,6 +214,7 @@ test_that("ansi='html' converts ANSI to HTML in .tables output", {
 })
 
 test_that("counter resets after kill_all", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   eng_duckdb(make_options("SELECT 1;"))
@@ -277,6 +294,7 @@ test_that("parse_commands: dot-command flushes incomplete SQL", {
 # interleaved output tests
 
 test_that("multiple commands produce interleaved output", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   opts = make_options(c("SELECT 1 as a;", "SELECT 2 as b;"))
@@ -291,6 +309,7 @@ test_that("multiple commands produce interleaved output", {
 })
 
 test_that("collapse = TRUE batches all code then output", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   single = eng_duckdb(make_options(c("SELECT 1 as a;", "SELECT 2 as b;"), collapse = TRUE))
@@ -300,6 +319,7 @@ test_that("collapse = TRUE batches all code then output", {
 })
 
 test_that("error stops at first failing command", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   opts = make_options(c("SELECT 1;", "SELCT bad;", "SELECT 3;"))
@@ -307,6 +327,7 @@ test_that("error stops at first failing command", {
 })
 
 test_that("error = TRUE continues after failing command", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   opts = make_options(c("SELECT 1 as a;", "SELCT bad;", "SELECT 3 as c;"), error = TRUE)

@@ -27,3 +27,13 @@ duckknit_get_session(name, db = NULL)
 
 A [`processx::process`](http://processx.r-lib.org/reference/process.md)
 object (invisibly).
+
+## Examples
+
+``` r
+s1 = duckknit_get_session("demo")
+s2 = duckknit_get_session("demo")
+identical(s1$get_pid(), s2$get_pid())
+#> [1] TRUE
+duckknit_kill_session("demo")
+```

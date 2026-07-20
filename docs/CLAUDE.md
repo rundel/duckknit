@@ -19,7 +19,7 @@ chunks.
 - `R/engine.R` — knitr engine function (`eng_duckdb`) with chunk option
   handling, session resolution, and ANSI processing
 - `R/sitrep.R` —
-  [`duckdb_sitrep()`](https://rundel.github.io/duckknit/reference/duckdb_sitrep.md)
+  [`duckknit_sitrep()`](https://rundel.github.io/duckknit/reference/duckknit_sitrep.md)
   diagnostic function
 - `R/zzz.R` — `.onLoad` (engine registration) and `.onUnload` (session
   cleanup)

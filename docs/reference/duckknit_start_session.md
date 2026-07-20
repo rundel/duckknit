@@ -24,3 +24,12 @@ duckknit_start_session(name, db = ":memory:")
 
 A [`processx::process`](http://processx.r-lib.org/reference/process.md)
 object (invisibly).
+
+## Examples
+
+``` r
+s = duckknit_start_session("demo")
+s$is_alive()
+#> [1] TRUE
+duckknit_kill_session("demo")
+```

@@ -7,8 +7,18 @@
 duckknit_kill_session(name)
 }
 \arguments{
-\item{name}{Character. Name of the session to kill.}
+\item{name}{Character. Name of the session to kill. Killing a session
+that does not exist is a no-op.}
+}
+\value{
+\code{NULL} (invisibly). Called for its side effect.
 }
 \description{
 Kill a DuckDB CLI session
+}
+\examples{
+\dontshow{if (nzchar(Sys.which("duckdb"))) withAutoprint(\{ # examplesIf}
+duckknit_start_session("demo")
+duckknit_kill_session("demo")
+\dontshow{\}) # examplesIf}
 }

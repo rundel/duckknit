@@ -38,7 +38,7 @@ You can verify your installation with:
 
 ```{r}
 #| echo: true
-duckdb_sitrep()
+duckknit_sitrep()
 ```
 
 ## Installation
@@ -122,10 +122,10 @@ SELECT 'still here' as status;
 
 ### Managing sessions
 
-Use `duckdb_sitrep()` to see active sessions. The `*` marks the last used session:
+Use `duckknit_sitrep()` to see active sessions. The `*` marks the last used session:
 
 ```{r}
-duckdb_sitrep()
+duckknit_sitrep()
 ```
 
 Use `duckknit_list_sessions()` to get a tibble of sessions:

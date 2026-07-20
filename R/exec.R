@@ -9,6 +9,12 @@
 #'   is thrown if the command does not complete within this time.
 #'
 #' @return A list with `stdout` and `stderr` character strings.
+#'
+#' @examplesIf nzchar(Sys.which("duckdb"))
+#' s = duckknit_start_session("demo")
+#' result = duckknit_exec(s, "SELECT 1 + 1 AS two;")
+#' cat(result$stdout)
+#' duckknit_kill_session("demo")
 #' @export
 duckknit_exec = function(session, code, timeout = 30000L) {
   if (!session$is_alive()) {

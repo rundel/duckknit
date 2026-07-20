@@ -1,10 +1,10 @@
 # Changelog
 
-## duckknit 0.0.9.9000
+## duckknit 0.1.0
 
 - Initial release.
 - [duckdb](https://r.duckdb.org/) knitr engine with persistent CLI
   sessions across chunks.
 - Chunk options: `db`, `session`, `mode`, `timeout`, `ansi`.
-- [`duckdb_sitrep()`](https://rundel.github.io/duckknit/reference/duckdb_sitrep.md)
+- [`duckknit_sitrep()`](https://rundel.github.io/duckknit/reference/duckknit_sitrep.md)
   for diagnostics.

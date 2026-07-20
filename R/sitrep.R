@@ -4,8 +4,11 @@
 #' and any active sessions.
 #'
 #' @return Invisibly returns a list with `path`, `version`, and `sessions`.
+#'
+#' @examples
+#' duckknit_sitrep()
 #' @export
-duckdb_sitrep = function() {
+duckknit_sitrep = function() {
   cli_found = tryCatch(
     { path = find_duckdb(); TRUE },
     error = function(e) FALSE
@@ -55,10 +58,15 @@ duckdb_sitrep = function() {
 
 #' List active DuckDB CLI sessions
 #'
-#' Returns a tibble summarising all registered sessions.
+#' Returns a tibble summarizing all registered sessions.
 #'
 #' @return A [tibble::tibble] with columns `session`, `status`, `db`, and
 #'   `active` (logical, `TRUE` for the last used session).
+#'
+#' @examplesIf nzchar(Sys.which("duckdb"))
+#' duckknit_start_session("demo")
+#' duckknit_list_sessions()
+#' duckknit_kill_all_sessions()
 #' @export
 duckknit_list_sessions = function() {
   session_names = ls(.sessions)

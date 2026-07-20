@@ -11,5 +11,12 @@ A \link[tibble:tibble]{tibble::tibble} with columns \code{session}, \code{status
 \code{active} (logical, \code{TRUE} for the last used session).
 }
 \description{
-Returns a tibble summarising all registered sessions.
+Returns a tibble summarizing all registered sessions.
+}
+\examples{
+\dontshow{if (nzchar(Sys.which("duckdb"))) withAutoprint(\{ # examplesIf}
+duckknit_start_session("demo")
+duckknit_list_sessions()
+duckknit_kill_all_sessions()
+\dontshow{\}) # examplesIf}
 }

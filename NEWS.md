@@ -1,6 +1,6 @@
-# duckknit 0.0.9.9000
+# duckknit 0.1.0
 
 * Initial release.
 * `{duckdb}` knitr engine with persistent CLI sessions across chunks.
 * Chunk options: `db`, `session`, `mode`, `timeout`, `ansi`.
-* `duckdb_sitrep()` for diagnostics.
+* `duckknit_sitrep()` for diagnostics.

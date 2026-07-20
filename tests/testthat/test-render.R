@@ -27,6 +27,7 @@ render_qmd = function(filename) {
 
 test_that("Rmd rendering", {
   skip_if_not_installed("rmarkdown")
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   result = render_rmd("test.Rmd")
@@ -36,10 +37,8 @@ test_that("Rmd rendering", {
 test_that("qmd rendering", {
   skip_if_not_installed("quarto")
   skip_if_not_installed("duckknit")
-  skip_if(
-    system2("quarto", "--version", stdout = TRUE, stderr = TRUE) |> length() == 0,
-    "quarto CLI not available"
-  )
+  skip_if(is.null(quarto::quarto_path()), "quarto CLI not available")
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   result = render_qmd("test.qmd")

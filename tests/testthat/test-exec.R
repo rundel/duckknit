@@ -1,4 +1,5 @@
 test_that("simple SELECT returns output", {
+  skip_if_no_duckdb()
   s = duckknit_get_session("exec_basic", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -11,6 +12,7 @@ test_that("simple SELECT returns output", {
 })
 
 test_that("state persists across exec calls", {
+  skip_if_no_duckdb()
   s = duckknit_get_session("exec_persist", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -23,6 +25,7 @@ test_that("state persists across exec calls", {
 })
 
 test_that("non-output statements return empty stdout", {
+  skip_if_no_duckdb()
   s = duckknit_get_session("exec_noout", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -33,6 +36,7 @@ test_that("non-output statements return empty stdout", {
 })
 
 test_that("syntax errors appear in stderr", {
+  skip_if_no_duckdb()
   s = duckknit_get_session("exec_err", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -43,6 +47,7 @@ test_that("syntax errors appear in stderr", {
 })
 
 test_that("errors do not prevent subsequent commands", {
+  skip_if_no_duckdb()
   s = duckknit_get_session("exec_recover", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -53,6 +58,7 @@ test_that("errors do not prevent subsequent commands", {
 })
 
 test_that("multi-statement code works", {
+  skip_if_no_duckdb()
   s = duckknit_get_session("exec_multi", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -63,6 +69,7 @@ test_that("multi-statement code works", {
 })
 
 test_that("exec on dead session errors", {
+  skip_if_no_duckdb()
   s = duckknit_start_session("exec_dead", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -76,6 +83,7 @@ test_that("exec on dead session errors", {
 })
 
 test_that("exec errors on timeout", {
+  skip_if_no_duckdb()
   s = duckknit_get_session("exec_timeout", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -86,6 +94,7 @@ test_that("exec errors on timeout", {
 })
 
 test_that("exec does not advance RNG state", {
+  skip_if_no_duckdb()
   s = duckknit_get_session("exec_rng", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -97,6 +106,7 @@ test_that("exec does not advance RNG state", {
 })
 
 test_that("sentinel is stripped from output", {
+  skip_if_no_duckdb()
   s = duckknit_get_session("exec_sentinel", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -106,6 +116,7 @@ test_that("sentinel is stripped from output", {
 })
 
 test_that(".mode commands work within exec", {
+  skip_if_no_duckdb()
   s = duckknit_get_session("exec_mode", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -119,6 +130,7 @@ test_that(".mode commands work within exec", {
 })
 
 test_that("mode persists across exec calls", {
+  skip_if_no_duckdb()
   s = duckknit_get_session("exec_mode_persist", ":memory:")
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
@@ -134,6 +146,7 @@ test_that("mode persists across exec calls", {
 })
 
 test_that("file-backed database persists data", {
+  skip_if_no_duckdb()
   tmp = tempfile(fileext = ".duckdb")
   on.exit({
     duckknit_kill_all_sessions()

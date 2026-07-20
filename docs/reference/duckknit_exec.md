@@ -29,3 +29,18 @@ duckknit_exec(session, code, timeout = 30000L)
 ## Value
 
 A list with `stdout` and `stderr` character strings.
+
+## Examples
+
+``` r
+s = duckknit_start_session("demo")
+result = duckknit_exec(s, "SELECT 1 + 1 AS two;")
+cat(result$stdout)
+#> ┌───────┐
+#> │  two  │
+#> │ int32 │
+#> ├───────┤
+#> │     2 │
+#> └───────┘
+duckknit_kill_session("demo")
+```

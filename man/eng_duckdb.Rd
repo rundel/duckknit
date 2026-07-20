@@ -31,3 +31,13 @@ Sends \verb{.mode <value>} before executing the chunk's SQL.}
 converts them to HTML markup via \code{\link[cli:ansi_html]{cli::ansi_html()}}.}
 }
 }
+\examples{
+\dontshow{if (nzchar(Sys.which("duckdb"))) withAutoprint(\{ # examplesIf}
+opts = c(
+  knitr::opts_chunk$get(),
+  list(code = "SELECT 42 AS answer;", engine = "duckdb", label = "demo")
+)
+cat(eng_duckdb(opts))
+duckknit_kill_all_sessions()
+\dontshow{\}) # examplesIf}
+}

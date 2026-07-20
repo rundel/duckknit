@@ -1,11 +1,13 @@
 Package: duckknit
-Title: A Knitr Engine for DuckDB CLI
-Version: 0.0.9.9000
-Authors@R: 
+Title: A 'knitr' Engine for the 'DuckDB' CLI
+Version: 0.1.0
+Authors@R:
     person("Colin", "Rundel", , "rundel@gmail.com", role = c("aut", "cre"))
-Description: Provides a knitr chunk engine that interfaces with the DuckDB
-    command-line interface. Chunks can target specific database files and
-    maintain persistent sessions across chunks within a document.
+Description: Provides a 'knitr' chunk engine that interfaces with the
+    'DuckDB' command-line interface (<https://duckdb.org/>). Chunks can
+    target specific database files and maintain persistent sessions across
+    chunks within a document. The 'DuckDB' CLI is external software and
+    must be installed separately.
 URL: https://rundel.github.io/duckknit/,
     https://github.com/rundel/duckknit
 BugReports: https://github.com/rundel/duckknit/issues
@@ -20,8 +22,7 @@ Suggests:
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-SystemRequirements: duckdb (>= 0.8.0)
-VignetteBuilder: knitr
+SystemRequirements: DuckDB CLI (>= 0.8.0) <https://duckdb.org/>
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Config/roxygen2/version: 8.0.0

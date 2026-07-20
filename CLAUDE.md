@@ -11,7 +11,7 @@ duckknit is an R package that provides a knitr chunk engine for DuckDB's CLI. Us
 - `R/session.R` — Session registry (`.sessions`, `.session_dbs`, `.state` environments) and processx process lifecycle
 - `R/exec.R` — SQL execution with `.print`-based sentinel detection for output capture
 - `R/engine.R` — knitr engine function (`eng_duckdb`) with chunk option handling, session resolution, and ANSI processing
-- `R/sitrep.R` — `duckdb_sitrep()` diagnostic function
+- `R/sitrep.R` — `duckknit_sitrep()` diagnostic function
 - `R/zzz.R` — `.onLoad` (engine registration) and `.onUnload` (session cleanup)
 
 ### Sentinel mechanism

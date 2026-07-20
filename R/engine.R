@@ -19,6 +19,14 @@
 #' }
 #'
 #' @return A character string of formatted output for knitr.
+#'
+#' @examplesIf nzchar(Sys.which("duckdb"))
+#' opts = c(
+#'   knitr::opts_chunk$get(),
+#'   list(code = "SELECT 42 AS answer;", engine = "duckdb", label = "demo")
+#' )
+#' cat(eng_duckdb(opts))
+#' duckknit_kill_all_sessions()
 #' @export
 eng_duckdb = function(options) {
   if (!isTRUE(options$eval)) {

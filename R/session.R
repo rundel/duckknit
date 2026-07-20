@@ -61,6 +61,11 @@ find_session_by_db = function(db) {
 #'   in-memory database.
 #'
 #' @return A `processx::process` object (invisibly).
+#'
+#' @examplesIf nzchar(Sys.which("duckdb"))
+#' s = duckknit_start_session("demo")
+#' s$is_alive()
+#' duckknit_kill_session("demo")
 #' @export
 duckknit_start_session = function(name, db = ":memory:") {
   if (db != ":memory:") {
@@ -107,6 +112,12 @@ duckknit_start_session = function(name, db = ":memory:") {
 #'   returned regardless of its database and a new session uses `":memory:"`.
 #'
 #' @return A `processx::process` object (invisibly).
+#'
+#' @examplesIf nzchar(Sys.which("duckdb"))
+#' s1 = duckknit_get_session("demo")
+#' s2 = duckknit_get_session("demo")
+#' identical(s1$get_pid(), s2$get_pid())
+#' duckknit_kill_session("demo")
 #' @export
 duckknit_get_session = function(name, db = NULL) {
   if (name %in% ls(.sessions)) {
@@ -132,8 +143,14 @@ duckknit_get_session = function(name, db = NULL) {
 
 #' Kill a DuckDB CLI session
 #'
-#' @param name Character. Name of the session to kill.
+#' @param name Character. Name of the session to kill. Killing a session
+#'   that does not exist is a no-op.
 #'
+#' @return `NULL` (invisibly). Called for its side effect.
+#'
+#' @examplesIf nzchar(Sys.which("duckdb"))
+#' duckknit_start_session("demo")
+#' duckknit_kill_session("demo")
 #' @export
 duckknit_kill_session = function(name) {
   if (!(name %in% ls(.sessions))) return(invisible())
@@ -156,6 +173,15 @@ duckknit_kill_session = function(name) {
 
 #' Kill all DuckDB CLI sessions
 #'
+#' Kills every registered session and resets the automatic session name
+#' counter.
+#'
+#' @return `NULL` (invisibly). Called for its side effect.
+#'
+#' @examplesIf nzchar(Sys.which("duckdb"))
+#' duckknit_start_session("demo1")
+#' duckknit_start_session("demo2")
+#' duckknit_kill_all_sessions()
 #' @export
 duckknit_kill_all_sessions = function() {
   for (name in ls(.sessions)) {

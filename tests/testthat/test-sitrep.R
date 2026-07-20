@@ -1,7 +1,8 @@
 test_that("sitrep reports cli details when found", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
-  result = duckdb_sitrep()
+  result = duckknit_sitrep()
 
   expect_type(result$path, "character")
   expect_true(file.exists(result$path))
@@ -10,12 +11,13 @@ test_that("sitrep reports cli details when found", {
 })
 
 test_that("sitrep lists active sessions", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   duckknit_start_session("s1", ":memory:")
   duckknit_start_session("s2", ":memory:")
 
-  result = duckdb_sitrep()
+  result = duckknit_sitrep()
 
   expect_length(result$sessions, 2)
   expect_true("s1" %in% result$sessions)
@@ -27,13 +29,14 @@ test_that("sitrep handles missing cli", {
 
   options(duckknit.duckdb = "/nonexistent/duckdb")
 
-  result = duckdb_sitrep()
+  result = duckknit_sitrep()
 
   expect_true(is.na(result$path))
   expect_true(is.na(result$version))
 })
 
 test_that("list_sessions returns all sessions when last_session is NULL", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   duckknit_start_session("ls1", ":memory:")
@@ -46,6 +49,7 @@ test_that("list_sessions returns all sessions when last_session is NULL", {
 })
 
 test_that("list_sessions marks last session active", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   duckknit_start_session("ls1", ":memory:")
@@ -58,9 +62,10 @@ test_that("list_sessions marks last session active", {
 })
 
 test_that("sitrep output includes key info", {
+  skip_if_no_duckdb()
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
-  expect_output(duckdb_sitrep(), "Path:")
-  expect_output(duckdb_sitrep(), "Version:")
-  expect_output(duckdb_sitrep(), "Sessions:")
+  expect_output(duckknit_sitrep(), "Path:")
+  expect_output(duckknit_sitrep(), "Version:")
+  expect_output(duckknit_sitrep(), "Sessions:")
 })

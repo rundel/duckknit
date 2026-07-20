@@ -47,3 +47,21 @@ Supported chunk options:
   them, `FALSE` (default) strips them, and `"html"` converts them to
   HTML markup via
   [`cli::ansi_html()`](https://cli.r-lib.org/reference/ansi_html.html).
+
+## Examples
+
+``` r
+opts = c(
+  knitr::opts_chunk$get(),
+  list(code = "SELECT 42 AS answer;", engine = "duckdb", label = "demo")
+)
+cat(eng_duckdb(opts))
+#> SELECT 42 AS answer;
+#> ## ┌────────┐
+#> ## │ answer │
+#> ## │ int32  │
+#> ## ├────────┤
+#> ## │     42 │
+#> ## └────────┘
+duckknit_kill_all_sessions()
+```

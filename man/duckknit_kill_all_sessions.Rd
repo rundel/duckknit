@@ -6,6 +6,17 @@
 \usage{
 duckknit_kill_all_sessions()
 }
+\value{
+\code{NULL} (invisibly). Called for its side effect.
+}
 \description{
-Kill all DuckDB CLI sessions
+Kills every registered session and resets the automatic session name
+counter.
+}
+\examples{
+\dontshow{if (nzchar(Sys.which("duckdb"))) withAutoprint(\{ # examplesIf}
+duckknit_start_session("demo1")
+duckknit_start_session("demo2")
+duckknit_kill_all_sessions()
+\dontshow{\}) # examplesIf}
 }
