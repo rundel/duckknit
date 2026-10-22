@@ -15,3 +15,15 @@ duckdb_variant = function() {
   os = if (.Platform$OS.type == "windows") "windows" else "unix"
   paste(version, os, sep = "-")
 }
+
+duckdb_version = function() {
+  ver = trimws(processx::run(duckknit:::find_duckdb(), "--version")$stdout)
+  package_version(regmatches(ver, regexpr("\\d+\\.\\d+\\.\\d+", ver)))
+}
+
+skip_if_duckdb_older_than = function(version) {
+  testthat::skip_if(
+    duckdb_version() < package_version(version),
+    paste("Requires DuckDB CLI >=", version)
+  )
+}

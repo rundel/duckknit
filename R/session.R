@@ -30,6 +30,17 @@ find_duckdb = function() {
   path
 }
 
+agent_mode_env = function() {
+  agent = getOption("duckknit.agent_mode", default = FALSE)
+  if (!is.logical(agent) || length(agent) != 1L || is.na(agent)) {
+    stop(
+      "Option 'duckknit.agent_mode' must be TRUE or FALSE.",
+      call. = FALSE
+    )
+  }
+  c("current", DUCKDB_AGENT_MODE = if (agent) "1" else "0")
+}
+
 norm_db_path = function(db) {
   # Resolve symlinks like /var -> /private/var on macOS by normalizing the
   # parent directory (which always exists) then appending the filename
@@ -59,6 +70,19 @@ find_session_by_db = function(db) {
 #' @param name Character. Name for the session.
 #' @param db Character. Path to a DuckDB database file, or `":memory:"` for an
 #'   in-memory database.
+#'
+#' @section Agent mode:
+#' DuckDB CLI 2.0.0 introduced an "agent mode" that switches on automatically
+#' when an AI agent environment variable (such as `AI_AGENT`) is set and
+#' standard output is not a terminal. Since duckknit always communicates with
+#' the CLI through pipes, this would change result formatting, emit a startup
+#' banner, and report errors as JSON whenever a document is rendered from
+#' within an AI coding tool. duckknit therefore sets `DUCKDB_AGENT_MODE=0` in
+#' the environment of every session it launches. Set
+#' `options(duckknit.agent_mode = TRUE)` to force agent mode on instead. The
+#' option is read when a session starts, so changing it does not affect
+#' sessions that are already running. DuckDB versions prior to 2.0.0 ignore the
+#' variable.
 #'
 #' @return A `processx::process` object (invisibly).
 #'
@@ -90,6 +114,7 @@ duckknit_start_session = function(name, db = ":memory:") {
     command = cmd,
     args = db,
     stdin = "|", stdout = "|", stderr = "|",
+    env = agent_mode_env(),
     cleanup = TRUE, cleanup_tree = TRUE
   )
 

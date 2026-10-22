@@ -30,7 +30,7 @@ duckknit_sitrep()
 #> 
 #> DuckDB CLI
 #>   Path:    /opt/homebrew/bin/duckdb 
-#>   Version: v1.5.4 (Variegata) 08e34c447b 
+#>   Version: v2.0.0-dev88614 (Development Version) d54cbbe3df 
 #> 
 #> Sessions: 0 active
 ```
@@ -206,7 +206,7 @@ duckknit_sitrep()
     #> 
     #> DuckDB CLI
     #>   Path:    /opt/homebrew/bin/duckdb 
-    #>   Version: v1.5.4 (Variegata) 08e34c447b 
+    #>   Version: v2.0.0-dev88614 (Development Version) d54cbbe3df 
     #> 
     #> Sessions: 3 active
     #>   - analysis (running) -> :memory:  * 
@@ -251,6 +251,16 @@ location:
 
 ``` r
 options(duckknit.duckdb = "/path/to/duckdb")
+```
+
+DuckDB 2.0.0 added an “agent mode” that turns on automatically when the
+CLI is run from an AI coding tool with its output piped, which is always
+the case for duckknit. Agent mode changes table formatting and error
+reporting, so duckknit disables it for every session it launches. To
+force it on instead:
+
+``` r
+options(duckknit.agent_mode = TRUE)
 ```
 
 ## Disclaimer

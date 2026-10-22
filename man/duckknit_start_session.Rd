@@ -18,6 +18,21 @@ A \code{processx::process} object (invisibly).
 \description{
 Launches a persistent DuckDB CLI process connected to the specified database.
 }
+\section{Agent mode}{
+
+DuckDB CLI 2.0.0 introduced an "agent mode" that switches on automatically
+when an AI agent environment variable (such as \code{AI_AGENT}) is set and
+standard output is not a terminal. Since duckknit always communicates with
+the CLI through pipes, this would change result formatting, emit a startup
+banner, and report errors as JSON whenever a document is rendered from
+within an AI coding tool. duckknit therefore sets \code{DUCKDB_AGENT_MODE=0} in
+the environment of every session it launches. Set
+\code{options(duckknit.agent_mode = TRUE)} to force agent mode on instead. The
+option is read when a session starts, so changing it does not affect
+sessions that are already running. DuckDB versions prior to 2.0.0 ignore the
+variable.
+}
+
 \examples{
 \dontshow{if (nzchar(Sys.which("duckdb"))) withAutoprint(\{ # examplesIf}
 s = duckknit_start_session("demo")

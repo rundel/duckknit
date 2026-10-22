@@ -206,3 +206,36 @@ test_that("find_session_by_db returns NULL for memory and unknown dbs", {
   expect_null(find_session_by_db(":memory:"))
   expect_null(find_session_by_db("/no/such/file.duckdb"))
 })
+
+test_that("agent_mode_env disables agent mode by default", {
+  withr::local_options(duckknit.agent_mode = NULL)
+  expect_equal(agent_mode_env(), c("current", DUCKDB_AGENT_MODE = "0"))
+
+  withr::local_options(duckknit.agent_mode = TRUE)
+  expect_equal(agent_mode_env(), c("current", DUCKDB_AGENT_MODE = "1"))
+
+  withr::local_options(duckknit.agent_mode = "yes")
+  expect_error(agent_mode_env(), "must be TRUE or FALSE")
+})
+
+test_that("sessions ignore agent environment variables by default", {
+  skip_if_no_duckdb()
+  withr::local_envvar(AI_AGENT = "test")
+  s = duckknit_start_session("agent_default", ":memory:")
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  result = duckknit_exec(s, "SELECT 1 AS x;")
+  expect_equal(result$stderr, "")
+  expect_false(grepl("| x:INTEGER |", result$stdout, fixed = TRUE))
+})
+
+test_that("duckknit.agent_mode = TRUE enables agent mode", {
+  skip_if_no_duckdb()
+  skip_if_duckdb_older_than("2.0.0")
+  withr::local_options(duckknit.agent_mode = TRUE)
+  s = duckknit_start_session("agent_on", ":memory:")
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  result = duckknit_exec(s, "SELECT 1 AS x;")
+  expect_match(result$stdout, "| x:INTEGER |", fixed = TRUE)
+})
