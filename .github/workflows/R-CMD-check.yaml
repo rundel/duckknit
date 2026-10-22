@@ -13,17 +13,20 @@ jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }}, duckdb ${{ matrix.config.duckdb }})
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - {os: macos-latest,   r: 'release'}
-          - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
-          - {os: ubuntu-latest,   r: 'release'}
-          - {os: ubuntu-latest,   r: 'oldrel-1'}
+          - {os: macos-latest,   r: 'release', duckdb: 'v2.0.0'}
+          - {os: windows-latest, r: 'release', duckdb: 'v2.0.0'}
+          - {os: ubuntu-latest,  r: 'devel',   duckdb: 'v2.0.0', http-user-agent: 'release'}
+          - {os: ubuntu-latest,  r: 'release', duckdb: 'v2.0.0'}
+          - {os: ubuntu-latest,  r: 'oldrel-1', duckdb: 'v2.0.0'}
+          - {os: macos-latest,   r: 'release', duckdb: 'v1.5.6'}
+          - {os: windows-latest, r: 'release', duckdb: 'v1.5.6'}
+          - {os: ubuntu-latest,  r: 'release', duckdb: 'v1.5.6'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -32,29 +35,43 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install DuckDB CLI (macOS)
-        if: runner.os == 'macOS'
+      # DuckDB renamed its CLI release assets in v2.0.0 (duckdb_cli-*.zip
+      # became duckdb-cli-*.tar.gz), so the download differs by major version.
+      - name: Install DuckDB CLI (Linux/macOS)
+        if: runner.os != 'Windows'
         run: |
-          curl -fsSL -o duckdb.tar.gz https://github.com/duckdb/duckdb/releases/latest/download/duckdb-cli-osx-universal.tar.gz
-          sudo tar -xzf duckdb.tar.gz -C /usr/local/bin
-          rm duckdb.tar.gz
-          duckdb --version
-
-      - name: Install DuckDB CLI (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          curl -fsSL -o duckdb.tar.gz https://github.com/duckdb/duckdb/releases/latest/download/duckdb-cli-linux-amd64.tar.gz
-          sudo tar -xzf duckdb.tar.gz -C /usr/local/bin
-          rm duckdb.tar.gz
+          VERSION="${{ matrix.config.duckdb }}"
+          case "$RUNNER_OS" in
+            Linux) PLATFORM=linux-amd64 ;;
+            macOS) PLATFORM=osx-universal ;;
+          esac
+          BASE="https://github.com/duckdb/duckdb/releases/download/$VERSION"
+          if [[ "$VERSION" == v1.* ]]; then
+            curl -fsSL -o duckdb.zip "$BASE/duckdb_cli-$PLATFORM.zip"
+            sudo unzip -o duckdb.zip duckdb -d /usr/local/bin
+            rm duckdb.zip
+          else
+            curl -fsSL -o duckdb.tar.gz "$BASE/duckdb-cli-$PLATFORM.tar.gz"
+            sudo tar -xzf duckdb.tar.gz -C /usr/local/bin duckdb
+            rm duckdb.tar.gz
+          fi
           duckdb --version
 
       - name: Install DuckDB CLI (Windows)
         if: runner.os == 'Windows'
         run: |
-          curl -fsSL -o duckdb.tar.gz https://github.com/duckdb/duckdb/releases/latest/download/duckdb-cli-windows-amd64.tar.gz
+          $version = "${{ matrix.config.duckdb }}"
+          $base = "https://github.com/duckdb/duckdb/releases/download/$version"
           New-Item -ItemType Directory -Force -Path "$HOME/bin" | Out-Null
-          tar -xzf duckdb.tar.gz -C "$HOME/bin"
-          Remove-Item duckdb.tar.gz
+          if ($version -like "v1.*") {
+            curl -fsSL -o duckdb.zip "$base/duckdb_cli-windows-amd64.zip"
+            Expand-Archive duckdb.zip -DestinationPath "$HOME/bin" -Force
+            Remove-Item duckdb.zip
+          } else {
+            curl -fsSL -o duckdb.tar.gz "$base/duckdb-cli-windows-amd64.tar.gz"
+            tar -xzf duckdb.tar.gz -C "$HOME/bin"
+            Remove-Item duckdb.tar.gz
+          }
           echo "$HOME/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           & "$HOME/bin/duckdb.exe" --version
         shell: pwsh
