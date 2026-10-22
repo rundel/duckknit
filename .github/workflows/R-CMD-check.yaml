@@ -34,22 +34,27 @@ jobs:
 
       - name: Install DuckDB CLI (macOS)
         if: runner.os == 'macOS'
-        run: brew install duckdb
+        run: |
+          curl -fsSL -o duckdb.tar.gz https://github.com/duckdb/duckdb/releases/latest/download/duckdb-cli-osx-universal.tar.gz
+          sudo tar -xzf duckdb.tar.gz -C /usr/local/bin
+          rm duckdb.tar.gz
+          duckdb --version
 
       - name: Install DuckDB CLI (Linux)
         if: runner.os == 'Linux'
         run: |
-          curl -fsSL -o duckdb.zip https://github.com/duckdb/duckdb/releases/latest/download/duckdb_cli-linux-amd64.zip
-          unzip duckdb.zip -d /usr/local/bin
-          rm duckdb.zip
+          curl -fsSL -o duckdb.tar.gz https://github.com/duckdb/duckdb/releases/latest/download/duckdb-cli-linux-amd64.tar.gz
+          sudo tar -xzf duckdb.tar.gz -C /usr/local/bin
+          rm duckdb.tar.gz
           duckdb --version
 
       - name: Install DuckDB CLI (Windows)
         if: runner.os == 'Windows'
         run: |
-          curl -fsSL -o duckdb.zip https://github.com/duckdb/duckdb/releases/latest/download/duckdb_cli-windows-amd64.zip
-          unzip duckdb.zip -d $HOME/bin
-          Remove-Item duckdb.zip
+          curl -fsSL -o duckdb.tar.gz https://github.com/duckdb/duckdb/releases/latest/download/duckdb-cli-windows-amd64.tar.gz
+          New-Item -ItemType Directory -Force -Path "$HOME/bin" | Out-Null
+          tar -xzf duckdb.tar.gz -C "$HOME/bin"
+          Remove-Item duckdb.tar.gz
           echo "$HOME/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           & "$HOME/bin/duckdb.exe" --version
         shell: pwsh
