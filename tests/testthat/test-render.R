@@ -31,7 +31,7 @@ test_that("Rmd rendering", {
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   result = render_rmd("test.Rmd")
-  expect_snapshot(cat(result))
+  expect_snapshot(cat(result), variant = duckdb_variant())
 })
 
 test_that("qmd rendering", {
@@ -42,5 +42,5 @@ test_that("qmd rendering", {
   on.exit(duckknit_kill_all_sessions(), add = TRUE)
 
   result = render_qmd("test.qmd")
-  expect_snapshot(cat(result))
+  expect_snapshot(cat(result), variant = duckdb_variant())
 })
