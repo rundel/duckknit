@@ -65,10 +65,10 @@
       
           SELCT bad syntax;
       
-          ## Parser Error: syntax error at or near "SELCT"
+          ## Parser Error: syntax error at or near "bad"
           ## 
           ## LINE 1: SELCT bad syntax;
-          ##         ^
+          ##               ^^^
 
 # qmd rendering
 
@@ -160,8 +160,8 @@
       SELCT bad syntax;
       ```
       
-          Parser Error: syntax error at or near "SELCT"
+          Parser Error: syntax error at or near "bad"
       
           LINE 1: SELCT bad syntax;
-                  ^
+                        ^^^
 
