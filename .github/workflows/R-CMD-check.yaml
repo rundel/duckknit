@@ -33,7 +33,7 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # DuckDB renamed its CLI release assets in v2.0.0 (duckdb_cli-*.zip
       # became duckdb-cli-*.tar.gz), so the download differs by major version.
