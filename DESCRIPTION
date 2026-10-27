@@ -13,6 +13,7 @@ URL: https://rundel.github.io/duckknit/,
 BugReports: https://github.com/rundel/duckknit/issues
 License: MIT + file LICENSE
 Imports:
+    htmltools,
     knitr,
     processx,
     tibble

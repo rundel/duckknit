@@ -1,0 +1,10 @@
+/* CLI prompts drawn as pseudo-elements so they are not copied with the code.
+   Pandoc emits an empty <a> at the start of every highlighted line. */
+pre.duckknit-prompt > code > span > a::after {
+  content: var(--duckknit-continue, "\000020\000020");
+  white-space: pre;
+  color: #aaaaaa;
+}
+pre.duckknit-prompt > code > span:first-child > a::after {
+  content: var(--duckknit-prompt, "D\000020");
+}

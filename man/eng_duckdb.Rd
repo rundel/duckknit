@@ -29,6 +29,16 @@ Sends \verb{.mode <value>} before executing the chunk's SQL.}
 \item{\code{ansi}}{Controls handling of ANSI escape codes in output.
 \code{TRUE} preserves them, \code{FALSE} (default) strips them, and \code{"html"}
 converts them to HTML markup via \code{\link[cli:ansi_html]{cli::ansi_html()}}.}
+\item{\code{prompt}}{If \code{TRUE}, the echoed code is shown as it would appear
+in an interactive CLI session: the first line of each command is
+prefixed with \code{"D "} and continuation lines are indented to match.
+In HTML output (including revealjs) the prompts are drawn with CSS so
+they are not picked up by copy buttons or text selection; this relies
+on the code being syntax highlighted, so \code{lang} defaults to \code{"sql"}.
+Use \code{prompt = "text"} to insert the prompts as plain text in every
+output format. The prompt and continuation strings can be changed with
+\code{options(duckknit.prompt = , duckknit.continue = )}. Defaults to
+\code{FALSE}, as for knitr's own \code{prompt} option.}
 }
 }
 \examples{

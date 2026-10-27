@@ -61,6 +61,12 @@
       
           SELECT 'not evaluated';
       
+      ## Prompt
+      
+          D SELECT 1
+              AS val;
+          D .tables
+      
       ## Error display
       
           SELCT bad syntax;
@@ -152,6 +158,14 @@
       
       ``` duckdb
       SELECT 'not evaluated';
+      ```
+      
+      ## Prompt
+      
+      ``` duckdb
+      D SELECT 1
+          AS val;
+      D .tables
       ```
       
       ## Error display

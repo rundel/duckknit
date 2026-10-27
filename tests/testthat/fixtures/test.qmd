@@ -51,6 +51,16 @@ SELECT name FROM students WHERE grade < 90;
 SELECT 'not evaluated';
 ```
 
+## Prompt
+
+```{duckdb}
+#| prompt: true
+#| eval: false
+SELECT 1
+  AS val;
+.tables
+```
+
 ## Error display
 
 ```{duckdb}

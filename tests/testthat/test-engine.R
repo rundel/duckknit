@@ -226,6 +226,84 @@ test_that("counter resets after kill_all", {
   expect_true("session-1" %in% ls(.sessions))
 })
 
+# prompt tests
+
+test_that("prompt = TRUE adds CLI prompts to echoed code", {
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  opts = make_options(c("SELECT", "  1;", ".tables"), eval = FALSE, prompt = TRUE)
+  result = eng_duckdb(opts)
+
+  expect_true(grepl("D SELECT\n    1;\nD .tables", result, fixed = TRUE))
+  expect_false(grepl("> ", result, fixed = TRUE))
+})
+
+test_that("prompt = TRUE prefixes each evaluated command", {
+  skip_if_no_duckdb()
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  opts = make_options(c("SELECT 1 as a;", "SELECT 2 as b;"), prompt = TRUE)
+  result = eng_duckdb(opts)
+
+  expect_true(grepl("D SELECT 1 as a;", result, fixed = TRUE))
+  expect_true(grepl("D SELECT 2 as b;", result, fixed = TRUE))
+})
+
+test_that("prompt strings come from duckknit options", {
+  skip_if_not_installed("withr")
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  opts = make_options(c("SELECT", "1;"), eval = FALSE, prompt = TRUE)
+  result = withr::with_options(
+    list(duckknit.prompt = "duck> ", duckknit.continue = "...> "),
+    eng_duckdb(opts)
+  )
+
+  expect_true(grepl("duck> SELECT\n...> 1;", result, fixed = TRUE))
+})
+
+test_that("prompt = FALSE leaves code unchanged", {
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  opts = make_options("SELECT 1;", eval = FALSE, prompt = FALSE)
+  expect_false(grepl("D SELECT", eng_duckdb(opts), fixed = TRUE))
+})
+
+test_that("prompt = TRUE uses CSS prompts in HTML output", {
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+  old = knitr::opts_knit$get()
+  on.exit(knitr::opts_knit$restore(old), add = TRUE)
+  knitr::opts_knit$set(rmarkdown.pandoc.to = "revealjs")
+
+  expect_equal(prompt_mode(TRUE), "css")
+  expect_equal(prompt_mode("text"), "text")
+  expect_equal(prompt_mode(FALSE), "none")
+
+  opts = make_options(c("SELECT", "1;"), eval = FALSE, prompt = TRUE)
+  result = eng_duckdb(opts)
+  expect_false(grepl("D SELECT", result, fixed = TRUE))
+
+  dep = knitr::knit_meta(clean = TRUE)[[1]]
+  expect_s3_class(dep, "html_dependency")
+  expect_equal(dep$name, "duckknit-prompt")
+})
+
+test_that("css_string hex escapes non-alphanumeric characters", {
+  expect_equal(css_string("D "), '"D\\000020"')
+  expect_equal(css_string("  "), '"\\000020\\000020"')
+  expect_equal(css_string('a"b'), '"a\\000022b"')
+})
+
+test_that("prompt = \"text\" forces text prompts in HTML output", {
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+  old = knitr::opts_knit$get()
+  on.exit(knitr::opts_knit$restore(old), add = TRUE)
+  knitr::opts_knit$set(rmarkdown.pandoc.to = "html")
+
+  opts = make_options(c("SELECT", "1;"), eval = FALSE, prompt = "text")
+  expect_true(grepl("D SELECT\n  1;", eng_duckdb(opts), fixed = TRUE))
+})
+
 # parse_commands tests
 
 test_that("parse_commands: single SQL", {

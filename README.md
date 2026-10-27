@@ -30,7 +30,7 @@ duckknit_sitrep()
 #> 
 #> DuckDB CLI
 #>   Path:    /opt/homebrew/bin/duckdb 
-#>   Version: v2.0.0-dev88614 (Development Version) d54cbbe3df 
+#>   Version: v2.0.0 (Cyanoptera) d54cbbe3df 
 #> 
 #> Sessions: 0 active
 ```
@@ -206,7 +206,7 @@ duckknit_sitrep()
     #> 
     #> DuckDB CLI
     #>   Path:    /opt/homebrew/bin/duckdb 
-    #>   Version: v2.0.0-dev88614 (Development Version) d54cbbe3df 
+    #>   Version: v2.0.0 (Cyanoptera) d54cbbe3df 
     #> 
     #> Sessions: 3 active
     #>   - analysis (running) -> :memory:  * 
@@ -240,6 +240,8 @@ duckknit_kill_all_sessions()
 | `session` | *(auto)* | Session name — reuses if it exists, creates if new. When omitted, the last used session is reused. |
 | `mode` | *(not set)* | DuckDB output mode (`csv`, `markdown`, `json`, etc.) |
 | `timeout` | `30000` | Max milliseconds to wait for output |
+| `ansi` | `FALSE` | Handling of ANSI escape codes in output (`FALSE` strips, `TRUE` keeps, `"html"` converts) |
+| `prompt` | `FALSE` | Echo code with CLI prompts (`D` plus indented continuation lines) |
 
 Standard knitr options (`echo`, `eval`, `results`, `include`, `error`)
 are also supported.
@@ -261,6 +263,17 @@ force it on instead:
 
 ``` r
 options(duckknit.agent_mode = TRUE)
+```
+
+The `prompt` chunk option echoes code the way it looks in an interactive
+CLI session, with `D` before each command and continuation lines
+indented. In HTML output (including revealjs slides) the prompts are
+drawn with CSS, so they are not included when code is copied or
+selected; elsewhere they are inserted as text (`prompt: "text"` forces
+this everywhere). The prompt strings can be changed:
+
+``` r
+options(duckknit.prompt = "D ", duckknit.continue = "  ")
 ```
 
 ## Disclaimer

@@ -1,0 +1,22 @@
+---
+title: "duckknit html test"
+format: html
+---
+
+```{r}
+#| include: false
+library(duckknit)
+```
+
+```{duckdb}
+#| prompt: true
+SELECT 1
+  AS val;
+```
+
+```{duckdb}
+#| prompt: true
+#| eval: false
+.mode csv
+SELECT 2;
+```
