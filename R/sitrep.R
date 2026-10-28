@@ -45,6 +45,7 @@ duckknit_sitrep = function() {
       alive = proc$is_alive()
       db = if (name %in% ls(.session_dbs)) .session_dbs[[name]] else ":memory:"
       status = if (alive) "running" else "dead"
+      if (session_readonly(name)) status = paste(status, "read-only", sep = ", ")
       marker = if (identical(name, .state$last_session)) " *" else ""
       cat("  -", name, paste0("(", status, ")"), "->", db, marker, "\n")
     }
@@ -60,7 +61,8 @@ duckknit_sitrep = function() {
 #'
 #' Returns a tibble summarizing all registered sessions.
 #'
-#' @return A [tibble::tibble] with columns `session`, `status`, `db`, and
+#' @return A [tibble::tibble] with columns `session`, `status`, `db`,
+#'   `readonly` (logical, `TRUE` if the database was opened read-only), and
 #'   `active` (logical, `TRUE` for the last used session).
 #'
 #' @examplesIf nzchar(Sys.which("duckdb"))
@@ -76,6 +78,7 @@ duckknit_list_sessions = function() {
       session = character(),
       status = character(),
       db = character(),
+      readonly = logical(),
       active = logical()
     ))
   }
@@ -88,6 +91,7 @@ duckknit_list_sessions = function() {
     db = vapply(session_names, function(nm) {
       if (nm %in% ls(.session_dbs)) .session_dbs[[nm]] else ":memory:"
     }, character(1)),
+    readonly = vapply(session_names, session_readonly, logical(1), USE.NAMES = FALSE),
     active = if (is.null(.state$last_session)) {
       FALSE
     } else {

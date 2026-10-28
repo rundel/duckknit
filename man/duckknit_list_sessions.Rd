@@ -7,7 +7,8 @@
 duckknit_list_sessions()
 }
 \value{
-A \link[tibble:tibble]{tibble::tibble} with columns \code{session}, \code{status}, \code{db}, and
+A \link[tibble:tibble]{tibble::tibble} with columns \code{session}, \code{status}, \code{db},
+\code{readonly} (logical, \code{TRUE} if the database was opened read-only), and
 \code{active} (logical, \code{TRUE} for the last used session).
 }
 \description{

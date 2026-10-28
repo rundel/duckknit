@@ -21,6 +21,12 @@ A list with \code{stdout} and \code{stderr} character strings.
 Sends SQL code to a running DuckDB CLI process and captures the output using
 a sentinel-based detection mechanism.
 }
+\details{
+If the CLI process exits before producing output (for example because the
+database file is locked by another process), an error is raised immediately
+with the process's exit status and anything it wrote to stderr, rather than
+waiting for \code{timeout} to elapse.
+}
 \examples{
 \dontshow{if (nzchar(Sys.which("duckdb"))) withAutoprint(\{ # examplesIf}
 s = duckknit_start_session("demo")

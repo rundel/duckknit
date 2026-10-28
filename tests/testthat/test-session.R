@@ -239,3 +239,119 @@ test_that("duckknit.agent_mode = TRUE enables agent mode", {
   result = duckknit_exec(s, "SELECT 1 AS x;")
   expect_match(result$stdout, "| x:INTEGER |", fixed = TRUE)
 })
+
+test_that("starting a session on a locked database file errors immediately", {
+  skip_if_no_duckdb()
+  db = withr::local_tempfile(fileext = ".duckdb")
+
+  holder = processx::process$new(
+    find_duckdb(), db,
+    stdin = "|", stdout = "|", stderr = "|",
+    env = agent_mode_env(), cleanup = TRUE
+  )
+  withr::defer(holder$kill())
+  holder$write_input("CREATE TABLE t (x INTEGER);\n.print READY\n")
+  out = ""
+  deadline = Sys.time() + 10
+  while (!grepl("READY", out, fixed = TRUE) && Sys.time() < deadline) {
+    holder$poll_io(100)
+    out = paste0(out, holder$read_output())
+  }
+  expect_true(grepl("READY", out, fixed = TRUE))
+
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+  start = Sys.time()
+  expect_error(
+    {
+      s = duckknit_start_session("locked", db)
+      duckknit_exec(s, "SELECT 1;")
+    },
+    "lock"
+  )
+  expect_lt(as.numeric(Sys.time() - start, units = "secs"), 5)
+  expect_false("locked" %in% ls(.sessions))
+})
+
+test_that("readonly sessions can share a database file", {
+  skip_if_no_duckdb()
+  tmp = tempfile(fileext = ".duckdb")
+  on.exit({
+    duckknit_kill_all_sessions()
+    unlink(tmp)
+  }, add = TRUE)
+
+  w = duckknit_start_session("writer", tmp)
+  duckknit_exec(w, "CREATE TABLE t AS SELECT 42 AS x;")
+  duckknit_kill_session("writer")
+
+  r1 = duckknit_start_session("ro1", tmp, readonly = TRUE)
+  r2 = duckknit_start_session("ro2", tmp, readonly = TRUE)
+  expect_true(r1$is_alive())
+  expect_true(r2$is_alive())
+  expect_match(duckknit_exec(r2, "SELECT x FROM t;")$stdout, "42")
+
+  expect_error(
+    duckknit_start_session("rw", tmp),
+    "already open in session"
+  )
+
+  result = duckknit_exec(r1, "CREATE TABLE y (a INTEGER);")
+  expect_match(result$stderr, "read-only")
+})
+
+test_that("readonly session cannot be added to a read/write database", {
+  skip_if_no_duckdb()
+  tmp = tempfile(fileext = ".duckdb")
+  on.exit({
+    duckknit_kill_all_sessions()
+    unlink(tmp)
+  }, add = TRUE)
+
+  duckknit_start_session("rw", tmp)
+
+  expect_error(
+    duckknit_start_session("ro", tmp, readonly = TRUE),
+    "already open in session"
+  )
+})
+
+test_that("get_session errors when readonly conflicts with existing session", {
+  skip_if_no_duckdb()
+  tmp = tempfile(fileext = ".duckdb")
+  on.exit({
+    duckknit_kill_all_sessions()
+    unlink(tmp)
+  }, add = TRUE)
+
+  duckknit_start_session("mode", tmp)
+
+  expect_error(
+    duckknit_get_session("mode", tmp, readonly = TRUE),
+    "already open read/write"
+  )
+  expect_no_error(duckknit_get_session("mode", tmp, readonly = FALSE))
+  expect_no_error(duckknit_get_session("mode", tmp))
+})
+
+test_that("readonly tracking is cleaned up on session kill", {
+  skip_if_no_duckdb()
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  duckknit_start_session("ro_track", ":memory:")
+  expect_true("ro_track" %in% ls(.session_readonly))
+  expect_false(session_readonly("ro_track"))
+
+  duckknit_kill_session("ro_track")
+  expect_false("ro_track" %in% ls(.session_readonly))
+})
+
+test_that("readonly must be a single logical", {
+  expect_error(duckknit_start_session("bad", ":memory:", readonly = "yes"), "TRUE or FALSE")
+  expect_error(duckknit_get_session("bad", readonly = NA), "TRUE or FALSE")
+})
+
+test_that("readonly in-memory session errors at startup", {
+  skip_if_no_duckdb()
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+  expect_error(duckknit_start_session("romem", ":memory:", readonly = TRUE), "read-only")
+})

@@ -69,3 +69,23 @@ test_that("sitrep output includes key info", {
   expect_output(duckknit_sitrep(), "Version:")
   expect_output(duckknit_sitrep(), "Sessions:")
 })
+
+test_that("sitrep and list_sessions report readonly sessions", {
+  skip_if_no_duckdb()
+  tmp = tempfile(fileext = ".duckdb")
+  on.exit({
+    duckknit_kill_all_sessions()
+    unlink(tmp)
+  }, add = TRUE)
+
+  duckknit_exec(duckknit_start_session("w", tmp), "SELECT 1;")
+  duckknit_kill_session("w")
+  duckknit_start_session("ro", tmp, readonly = TRUE)
+  duckknit_start_session("mem", ":memory:")
+
+  expect_output(duckknit_sitrep(), "ro \\(running, read-only\\)")
+  sessions = duckknit_list_sessions()
+  expect_equal(sessions$readonly[sessions$session == "ro"], TRUE)
+  expect_equal(sessions$readonly[sessions$session == "mem"], FALSE)
+  expect_named(duckknit_list_sessions(), c("session", "status", "db", "readonly", "active"))
+})

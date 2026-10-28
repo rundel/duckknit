@@ -82,6 +82,19 @@ test_that("exec on dead session errors", {
   )
 })
 
+test_that("exec errors promptly when the process exits mid-command", {
+  skip_if_no_duckdb()
+  s = duckknit_get_session("exec_quit", ":memory:")
+  on.exit(duckknit_kill_all_sessions(), add = TRUE)
+
+  start = Sys.time()
+  expect_error(
+    duckknit_exec(s, ".quit", timeout = 10000L),
+    "no longer running"
+  )
+  expect_lt(as.numeric(Sys.time() - start, units = "secs"), 5)
+})
+
 test_that("exec errors on timeout", {
   skip_if_no_duckdb()
   s = duckknit_get_session("exec_timeout", ":memory:")

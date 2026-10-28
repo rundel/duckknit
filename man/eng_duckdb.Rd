@@ -19,6 +19,14 @@ Knitr engine for DuckDB CLI
 Supported chunk options:
 \describe{
 \item{\code{db}}{Path to a DuckDB database file. Defaults to \code{":memory:"}.}
+\item{\code{readonly}}{If \code{TRUE}, the database is opened read-only (the CLI's
+\code{-readonly} flag). Defaults to \code{FALSE}. DuckDB lets several processes
+share a database file only when all of them open it read-only, so
+this allows a document to query a file that is also open elsewhere,
+at the cost of statements that modify the database failing. The
+option takes effect when a session is started; a chunk that sets it
+to a different value than the session it reuses was opened with is
+an error.}
 \item{\code{session}}{Session name. If it already exists, it is reused.
 Otherwise a new session is created. When omitted, the last used session
 is reused (or a new one is created automatically).}

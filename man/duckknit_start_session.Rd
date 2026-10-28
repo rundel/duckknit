@@ -4,19 +4,33 @@
 \alias{duckknit_start_session}
 \title{Start a new DuckDB CLI session}
 \usage{
-duckknit_start_session(name, db = ":memory:")
+duckknit_start_session(name, db = ":memory:", readonly = FALSE)
 }
 \arguments{
 \item{name}{Character. Name for the session.}
 
 \item{db}{Character. Path to a DuckDB database file, or \code{":memory:"} for an
 in-memory database.}
+
+\item{readonly}{Logical. Open the database read-only (the CLI's
+\code{-readonly} flag). Defaults to \code{FALSE}. Only meaningful for database
+files; the CLI refuses to open an in-memory database read-only.}
 }
 \value{
 A \code{processx::process} object (invisibly).
 }
 \description{
 Launches a persistent DuckDB CLI process connected to the specified database.
+}
+\details{
+DuckDB allows only one process to hold a database file open for writing at
+a time. If the file is already open elsewhere (another duckknit session, an
+R connection via the duckdb package, or a CLI in a terminal), the CLI exits
+immediately and this function raises an error that includes DuckDB's
+message identifying the process holding the lock. Any number of processes
+may share a file when every one of them opens it read-only, so set
+\code{readonly = TRUE} when the database is also open elsewhere in read-only
+mode and the document only needs to query it.
 }
 \section{Agent mode}{
 

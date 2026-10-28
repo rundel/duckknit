@@ -10,6 +10,12 @@
 #'
 #' @return A list with `stdout` and `stderr` character strings.
 #'
+#' @details
+#' If the CLI process exits before producing output (for example because the
+#' database file is locked by another process), an error is raised immediately
+#' with the process's exit status and anything it wrote to stderr, rather than
+#' waiting for `timeout` to elapse.
+#'
 #' @examplesIf nzchar(Sys.which("duckdb"))
 #' s = duckknit_start_session("demo")
 #' result = duckknit_exec(s, "SELECT 1 + 1 AS two;")
@@ -17,9 +23,7 @@
 #' duckknit_kill_session("demo")
 #' @export
 duckknit_exec = function(session, code, timeout = 30000L) {
-  if (!session$is_alive()) {
-    stop("DuckDB session is no longer running.", call. = FALSE)
-  }
+  if (!session$is_alive()) stop_session_exited(session)
 
   # Counter-based sentinel so execution never touches the global RNG state,
   # which would break reproducibility of documents that set a seed
@@ -32,7 +36,13 @@ duckknit_exec = function(session, code, timeout = 30000L) {
   session$read_error()
 
   input = paste0(code, "\n.print ", sentinel, "\n")
-  session$write_input(input)
+  tryCatch(
+    session$write_input(input),
+    error = function(e) {
+      if (!session$is_alive()) stop_session_exited(session)
+      stop(e)
+    }
+  )
 
   stdout_buf = ""
   poll_interval = 100L
@@ -47,6 +57,12 @@ duckknit_exec = function(session, code, timeout = 30000L) {
     }
     if (grepl(sentinel, stdout_buf, fixed = TRUE)) {
       found = TRUE
+      break
+    }
+    if (!session$is_alive()) {
+      stdout_buf = paste0(stdout_buf, read_remaining(session$read_output))
+      found = grepl(sentinel, stdout_buf, fixed = TRUE)
+      if (!found) stop_session_exited(session)
       break
     }
   }
@@ -72,4 +88,20 @@ duckknit_exec = function(session, code, timeout = 30000L) {
     stdout = paste(stdout_lines, collapse = "\n"),
     stderr = stderr_buf
   )
+}
+
+stop_session_exited = function(session, context = "DuckDB CLI process is no longer running") {
+  session$wait(timeout = 1000)
+  status = session$get_exit_status()
+  err = trimws(read_remaining(session$read_error))
+
+  msg = context
+  if (!is.null(status)) msg = paste0(msg, " (exit status ", status, ")")
+  msg = if (nzchar(err)) paste0(msg, ":\n", err) else paste0(msg, ".")
+  stop(msg, call. = FALSE)
+}
+
+# Pipes are closed once a process has been killed, so a read can error
+read_remaining = function(reader) {
+  tryCatch(reader(), error = function(e) "")
 }

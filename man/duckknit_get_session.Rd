@@ -4,7 +4,7 @@
 \alias{duckknit_get_session}
 \title{Get or create a DuckDB CLI session}
 \usage{
-duckknit_get_session(name, db = NULL)
+duckknit_get_session(name, db = NULL, readonly = NULL)
 }
 \arguments{
 \item{name}{Character. Name for the session.}
@@ -12,14 +12,19 @@ duckknit_get_session(name, db = NULL)
 \item{db}{Character. Path to a DuckDB database file, or \code{":memory:"} for an
 in-memory database. When \code{NULL} (the default), an existing session is
 returned regardless of its database and a new session uses \code{":memory:"}.}
+
+\item{readonly}{Logical. Whether the database should be open read-only.
+When \code{NULL} (the default), an existing session is returned regardless of
+its access mode and a new session is opened read/write.}
 }
 \value{
 A \code{processx::process} object (invisibly).
 }
 \description{
 Returns an existing session if one with the given name is alive, otherwise
-starts a new one. If \code{db} is supplied and an existing live session is
-connected to a different database, an error is raised.
+starts a new one. If \code{db} or \code{readonly} is supplied and an existing live
+session was opened with a different database or access mode, an error is
+raised.
 }
 \examples{
 \dontshow{if (nzchar(Sys.which("duckdb"))) withAutoprint(\{ # examplesIf}

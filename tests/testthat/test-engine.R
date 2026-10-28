@@ -415,3 +415,29 @@ test_that("error = TRUE continues after failing command", {
   expect_true(grepl("Error", result))
   expect_true(grepl("c", result))
 })
+
+test_that("readonly chunk option opens the database read-only", {
+  skip_if_no_duckdb()
+  tmp = tempfile(fileext = ".duckdb")
+  on.exit({
+    duckknit_kill_all_sessions()
+    unlink(tmp)
+  }, add = TRUE)
+
+  eng_duckdb(make_options("CREATE TABLE ro_t AS SELECT 7 AS v;", db = tmp))
+  duckknit_kill_all_sessions()
+
+  result = eng_duckdb(make_options("SELECT v FROM ro_t;", db = tmp, readonly = TRUE))
+  expect_match(result, "7")
+  expect_true(duckknit_list_sessions()$readonly)
+
+  expect_error(
+    eng_duckdb(make_options("INSERT INTO ro_t VALUES (8);", db = tmp)),
+    "read-only mode"
+  )
+
+  expect_error(
+    eng_duckdb(make_options("SELECT 1;", db = tmp, readonly = FALSE)),
+    "already open read-only"
+  )
+})

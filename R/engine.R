@@ -6,6 +6,14 @@
 #' Supported chunk options:
 #' \describe{
 #'   \item{`db`}{Path to a DuckDB database file. Defaults to `":memory:"`.}
+#'   \item{`readonly`}{If `TRUE`, the database is opened read-only (the CLI's
+#'     `-readonly` flag). Defaults to `FALSE`. DuckDB lets several processes
+#'     share a database file only when all of them open it read-only, so
+#'     this allows a document to query a file that is also open elsewhere,
+#'     at the cost of statements that modify the database failing. The
+#'     option takes effect when a session is started; a chunk that sets it
+#'     to a different value than the session it reuses was opened with is
+#'     an error.}
 #'   \item{`session`}{Session name. If it already exists, it is reused.
 #'     Otherwise a new session is created. When omitted, the last used session
 #'     is reused (or a new one is created automatically).}
@@ -52,7 +60,7 @@ eng_duckdb = function(options) {
   ansi = options$ansi %||% FALSE
 
   session_name = resolve_session(options$session, options$db)
-  session = duckknit_get_session(session_name, options$db)
+  session = duckknit_get_session(session_name, options$db, options$readonly)
   .state$last_session = session_name
 
   if (!is.null(options$mode)) {

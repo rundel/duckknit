@@ -30,7 +30,7 @@ Every chunk execution updates `.state$last_session`. The counter and last-sessio
 
 ### Concurrent database protection
 
-DuckDB's single-writer file lock prevents multiple CLI processes from opening the same database file. `duckknit_start_session()` checks `.session_dbs` before launching a new process and errors immediately if another live session holds the same file. In-memory (`:memory:`) sessions are exempt.
+DuckDB's file lock prevents multiple processes from opening the same database file unless every one of them opens it read-only. `duckknit_start_session()` checks `.session_dbs` before launching a new process and errors immediately if another live session holds the same file, unless both the new and the existing session are read-only (tracked in `.session_readonly`). In-memory (`:memory:`) sessions are exempt. The `readonly` chunk option is passed to `duckknit_get_session()`, which errors when a reused session's access mode differs from an explicitly requested one; `NULL` (option not set) skips that check.
 
 ### Path normalization
 
@@ -43,6 +43,8 @@ DuckDB dot-commands (`.tables`, `.schema`, etc.) emit ANSI color codes. The `ans
 ### Error handling
 
 DuckDB errors go to stderr; valid output goes to stdout. The sentinel always appears on stdout even after errors. By default, errors stop document rendering (`stop()`). With `error: true`, error text is included in the output instead.
+
+A dead CLI process is treated differently from a SQL error. The CLI opens the database before reading stdin, so a lock conflict (or unreadable file) makes it exit immediately with an `IO Error` on stderr and no sentinel ever arrives. `duckknit_start_session()` waits briefly after launch and errors if the process has already exited; `duckknit_exec()` checks `is_alive()` on every poll iteration and errors as soon as the process dies. Both go through `stop_session_exited()`, which reports the exit status and stderr. These errors always stop rendering, regardless of `error: true`, since without the sentinel the loop would otherwise spin until `timeout`.
 
 ## Common Commands
 

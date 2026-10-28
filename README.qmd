@@ -147,6 +147,7 @@ duckknit_kill_all_sessions()
 | Option    | Default       | Description                              |
 |-----------|---------------|------------------------------------------|
 | `db`      | `":memory:"`  | Path to a DuckDB database file           |
+| `readonly` | `FALSE`      | Open the database read-only. Several processes can share a file only when all of them open it read-only. |
 | `session` | *(auto)*      | Session name — reuses if it exists, creates if new. When omitted, the last used session is reused. |
 | `mode`    | *(not set)*   | DuckDB output mode (`csv`, `markdown`, `json`, etc.) |
 | `timeout` | `30000`       | Max milliseconds to wait for output      |

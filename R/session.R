@@ -1,5 +1,6 @@
 .sessions = new.env(parent = emptyenv())
 .session_dbs = new.env(parent = emptyenv())
+.session_readonly = new.env(parent = emptyenv())
 .state = new.env(parent = emptyenv())
 .state$counter = 0L
 .state$exec_counter = 0L
@@ -48,6 +49,17 @@ norm_db_path = function(db) {
   file.path(dir, basename(db))
 }
 
+session_readonly = function(name) {
+  isTRUE(.session_readonly[[name]])
+}
+
+check_readonly = function(readonly) {
+  if (!is.logical(readonly) || length(readonly) != 1L || is.na(readonly)) {
+    stop("`readonly` must be TRUE or FALSE.", call. = FALSE)
+  }
+  readonly
+}
+
 find_session_by_db = function(db) {
   if (db == ":memory:") return(NULL)
 
@@ -67,9 +79,21 @@ find_session_by_db = function(db) {
 #'
 #' Launches a persistent DuckDB CLI process connected to the specified database.
 #'
+#' DuckDB allows only one process to hold a database file open for writing at
+#' a time. If the file is already open elsewhere (another duckknit session, an
+#' R connection via the duckdb package, or a CLI in a terminal), the CLI exits
+#' immediately and this function raises an error that includes DuckDB's
+#' message identifying the process holding the lock. Any number of processes
+#' may share a file when every one of them opens it read-only, so set
+#' `readonly = TRUE` when the database is also open elsewhere in read-only
+#' mode and the document only needs to query it.
+#'
 #' @param name Character. Name for the session.
 #' @param db Character. Path to a DuckDB database file, or `":memory:"` for an
 #'   in-memory database.
+#' @param readonly Logical. Open the database read-only (the CLI's
+#'   `-readonly` flag). Defaults to `FALSE`. Only meaningful for database
+#'   files; the CLI refuses to open an in-memory database read-only.
 #'
 #' @section Agent mode:
 #' DuckDB CLI 2.0.0 introduced an "agent mode" that switches on automatically
@@ -91,16 +115,20 @@ find_session_by_db = function(db) {
 #' s$is_alive()
 #' duckknit_kill_session("demo")
 #' @export
-duckknit_start_session = function(name, db = ":memory:") {
+duckknit_start_session = function(name, db = ":memory:", readonly = FALSE) {
+  check_readonly(readonly)
+
   if (db != ":memory:") {
     db_norm = norm_db_path(db)
     for (existing in ls(.session_dbs)) {
       if (existing != name && .session_dbs[[existing]] == db_norm) {
         existing_proc = .sessions[[existing]]
-        if (!is.null(existing_proc) && existing_proc$is_alive()) {
+        shared = readonly && session_readonly(existing)
+        if (!shared && !is.null(existing_proc) && existing_proc$is_alive()) {
           stop(
             "Database '", db, "' is already open in session '", existing,
-            "'. DuckDB does not support concurrent connections from separate processes.",
+            "'. DuckDB only allows concurrent access from separate processes ",
+            "when all of them open the database read-only.",
             call. = FALSE
           )
         }
@@ -112,13 +140,21 @@ duckknit_start_session = function(name, db = ":memory:") {
 
   proc = processx::process$new(
     command = cmd,
-    args = db,
+    args = c(if (readonly) "-readonly", db),
     stdin = "|", stdout = "|", stderr = "|",
     env = agent_mode_env(),
     cleanup = TRUE, cleanup_tree = TRUE
   )
 
+  # The CLI opens the database before reading stdin, so a lock conflict or
+  # unreadable file surfaces as an immediate exit
+  proc$wait(timeout = 50)
+  if (!proc$is_alive()) {
+    stop_session_exited(proc, paste0("DuckDB CLI exited while opening '", db, "'"))
+  }
+
   .sessions[[name]] = proc
+  .session_readonly[[name]] = readonly
   if (db != ":memory:") {
     .session_dbs[[name]] = norm_db_path(db)
   }
@@ -128,13 +164,17 @@ duckknit_start_session = function(name, db = ":memory:") {
 #' Get or create a DuckDB CLI session
 #'
 #' Returns an existing session if one with the given name is alive, otherwise
-#' starts a new one. If `db` is supplied and an existing live session is
-#' connected to a different database, an error is raised.
+#' starts a new one. If `db` or `readonly` is supplied and an existing live
+#' session was opened with a different database or access mode, an error is
+#' raised.
 #'
 #' @param name Character. Name for the session.
 #' @param db Character. Path to a DuckDB database file, or `":memory:"` for an
 #'   in-memory database. When `NULL` (the default), an existing session is
 #'   returned regardless of its database and a new session uses `":memory:"`.
+#' @param readonly Logical. Whether the database should be open read-only.
+#'   When `NULL` (the default), an existing session is returned regardless of
+#'   its access mode and a new session is opened read/write.
 #'
 #' @return A `processx::process` object (invisibly).
 #'
@@ -144,7 +184,9 @@ duckknit_start_session = function(name, db = ":memory:") {
 #' identical(s1$get_pid(), s2$get_pid())
 #' duckknit_kill_session("demo")
 #' @export
-duckknit_get_session = function(name, db = NULL) {
+duckknit_get_session = function(name, db = NULL, readonly = NULL) {
+  if (!is.null(readonly)) check_readonly(readonly)
+
   if (name %in% ls(.sessions)) {
     proc = .sessions[[name]]
     if (proc$is_alive()) {
@@ -159,11 +201,19 @@ duckknit_get_session = function(name, db = NULL) {
           )
         }
       }
+      if (!is.null(readonly) && readonly != session_readonly(name)) {
+        mode = function(ro) if (ro) "read-only" else "read/write"
+        stop(
+          "Session '", name, "' is already open ", mode(session_readonly(name)),
+          ", not ", mode(readonly), ". Kill it first or use a different session name.",
+          call. = FALSE
+        )
+      }
       return(invisible(proc))
     }
   }
 
-  duckknit_start_session(name, db %||% ":memory:")
+  duckknit_start_session(name, db %||% ":memory:", readonly %||% FALSE)
 }
 
 #' Kill a DuckDB CLI session
@@ -187,6 +237,9 @@ duckknit_kill_session = function(name) {
   rm(list = name, envir = .sessions)
   if (name %in% ls(.session_dbs)) {
     rm(list = name, envir = .session_dbs)
+  }
+  if (name %in% ls(.session_readonly)) {
+    rm(list = name, envir = .session_readonly)
   }
 
   if (identical(.state$last_session, name)) {
