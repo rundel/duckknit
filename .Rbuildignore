@@ -13,3 +13,5 @@
 \.duckdb\.wal$
 \.DS_Store$
 ^\.quarto$
+^positron_quarto_todo\.md$
+^CLAUDE\.local\.md$
